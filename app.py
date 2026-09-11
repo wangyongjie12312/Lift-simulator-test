@@ -13,13 +13,20 @@ from __future__ import annotations
 from pathlib import Path
 
 import streamlit as st
+import os
+
+# 读取 API 地址（Streamlit Cloud secrets 优先，本地开发用环境变量）
+API_URL = st.secrets.get("LIFTSIM_API") or os.environ.get(
+    "LIFTSIM_API", 
+    "http://localhost:8000"  # 本地开发默认值
+)
 
 FIG = Path(__file__).resolve().parent / "web" / "figures"
 st.set_page_config(page_title="Lift Simulator", page_icon=FIG / "sl_logo-init_p.png",
                    layout="wide", initial_sidebar_state="expanded")
 
 from ui import auth, chrome, client, dialogs, theme as T, views   # noqa: E402
-
+client = Client(base_url=API_URL)
 # The supplied wordmark is white + yellow, made for a dark background. It is
 # used unchanged, on a dark chip, rather than recoloured.
 
