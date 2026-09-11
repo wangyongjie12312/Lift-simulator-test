@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 
 import httpx
 
-BASE = os.getenv("LIFTSIM_API", "http://127.0.0.1:8000")
+BASE = os.getenv("LIFTSIM_API", "https://lift-simulator-backend.up.railway.app")
 TIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)
 
 

@@ -18,7 +18,7 @@ import os
 # 读取 API 地址（Streamlit Cloud secrets 优先，本地开发用环境变量）
 API_URL = st.secrets.get("LIFTSIM_API") or os.environ.get(
     "LIFTSIM_API", 
-    "http://localhost:8000"  # 本地开发默认值
+    "https://lift-simulator-backend.up.railway.app"
 )
 
 FIG = Path(__file__).resolve().parent / "web" / "figures"
