@@ -26,7 +26,7 @@ st.set_page_config(page_title="Lift Simulator", page_icon=FIG / "sl_logo-init_p.
                    layout="wide", initial_sidebar_state="expanded")
 
 from ui import auth, chrome, client, dialogs, theme as T, views   # noqa: E402
-client = Client(base_url=API_URL)
+client.BASE = API_URL.rstrip("/")
 # The supplied wordmark is white + yellow, made for a dark background. It is
 # used unchanged, on a dark chip, rather than recoloured.
 

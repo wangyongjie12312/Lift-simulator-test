@@ -62,32 +62,32 @@ def _call(method: str, path: str, *, user: str | None = None,
 
 # --- probes --------------------------------------------------------------
 def health() -> Dict:
-    return _call("GET", "/api/health")
+    return _call("GET", "/health")
 
 
 def boot() -> Dict:
     """Warm-up progress. Public on purpose: the sign-in page renders it
     before anybody has signed in."""
-    return _call("GET", "/api/public/boot")
+    return _call("GET", "/public/boot")
 
 
 # --- domain --------------------------------------------------------------
 def units(include_deleted: bool = False) -> List[Dict]:
-    return _call("GET", "/api/units",
+    return _call("GET", "/units",
                  params={"include_deleted": str(include_deleted).lower()})
 
 
 def unit_status() -> Dict:
-    return _call("GET", "/api/units/status")
+    return _call("GET", "/units/status")
 
 
 def unit_fields() -> List[Dict]:
-    return _call("GET", "/api/units/fields")
+    return _call("GET", "/units/fields")
 
 
 def create_unit(user: str, name: str, params: Dict, applications: List[str],
                 note: str = "") -> Dict:
-    return _call("POST", "/api/units", user=user,
+    return _call("POST", "/units", user=user,
                  json={"name": name, "params": params,
                        "applications": applications, "note": note})
 
@@ -97,7 +97,7 @@ def create_variant(user: str, base_name: str, changes: Dict,
     """Edit is always a NEW unit. A catalogue unit is referenced by saved
     cases, so overwriting one would make old results unreproducible - the API
     refuses it, and this is the only edit path the UI offers."""
-    return _call("POST", "/api/units/variant", user=user,
+    return _call("POST", "/units/variant", user=user,
                  json={"base_name": base_name, "new_name": new_name,
                        "changes": changes})
 
@@ -105,25 +105,25 @@ def create_variant(user: str, base_name: str, changes: Dict,
 def delete_unit(user: str, name: str) -> Dict:
     """Soft delete: state = 0. The record stays, so a case that named this
     unit still resolves it."""
-    return _call("DELETE", "/api/units", user=user, params={"name": name})
+    return _call("DELETE", "/units", user=user, params={"name": name})
 
 
 def simulate(req: Dict, user: str) -> Dict:
-    return _call("POST", "/api/simulate", user=user, json=req)
+    return _call("POST", "/simulate", user=user, json=req)
 
 
 def list_cases(user: str) -> List[Dict]:
-    return _call("GET", "/api/cases", user=user)
+    return _call("GET", "/cases", user=user)
 
 
 def save_case(user: str, name: str, inputs: Dict) -> Dict:
-    return _call("POST", "/api/cases", user=user,
+    return _call("POST", "/cases", user=user,
                  json={"name": name, "inputs": inputs})
 
 
 def get_case(user: str, case_id: str) -> Dict:
-    return _call("GET", f"/api/cases/{case_id}", user=user)
+    return _call("GET", f"/cases/{case_id}", user=user)
 
 
 def delete_case(user: str, case_id: str) -> None:
-    _call("DELETE", f"/api/cases/{case_id}", user=user)
+    _call("DELETE", f"/cases/{case_id}", user=user)
