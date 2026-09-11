@@ -32,36 +32,6 @@ SLIDES = [
      "stroke and compensation capacity, deployed from in-air through the "
      "splash zone to the seabed.",
      ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC03.jpg", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC04.jpg", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC05.jpg", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC06.jpg", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC07.png", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
-    ("PHC08.jpg", "Passive heave compensators",
-     "Hydraulic units that decouple the load from vessel motion. Sized by "
-     "stroke and compensation capacity, deployed from in-air through the "
-     "splash zone to the seabed.",
-     ["In air", "Splash zone", "Subsea", "Landing"]),
     ("IAHC01.png", "Active heave compensators",
      "Hydraulic units that decouple the load from vessel motion. Sized by "
      "stroke and compensation capacity, deployed from in-air through the "
@@ -72,11 +42,6 @@ SLIDES = [
      "stroke and compensation capacity, deployed from in-air through the "
      "splash zone to the seabed.",
      ["In air", "Splash zone", "Subsea", "Landing","Quick lifting"]),
-    ("Safelink_Tablet_red.jpg", "The Safelink tablet",
-     "The Safelink tablet is the interface to the simulator. It is used to "
-     "enter the payload, the lift and the sea state, and to read the pressure "
-     "and stroke history through all four phases.",
-     ["Touchscreen", "Wireless", "Offshore", "Rugged", "IP67"]),
     ("SafelinkTabWifi.png", "The Safelink tablet",
      "The Safelink tablet is the interface to the simulator. It is used to "
      "enter the payload, the lift and the sea state, and to read the pressure "
