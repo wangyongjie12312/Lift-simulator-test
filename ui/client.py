@@ -17,8 +17,7 @@ TIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)
 
 
 class Unreachable(RuntimeError):
-    """The API is not answering. Distinct from a rejected request: one means
-    the backend is down, the other means the inputs were wrong."""
+    """The API is not answering, including the target and transport error."""
 
 
 class ApiError(RuntimeError):
@@ -54,7 +53,7 @@ def _call(method: str, path: str, *, user: str | None = None,
         with httpx.Client(base_url=BASE, timeout=TIMEOUT) as c:
             r = c.request(method, path, json=json, params=params, headers=headers)
     except httpx.HTTPError as exc:
-        raise Unreachable(str(exc)) from exc
+        raise Unreachable(f"{BASE}{path}: {exc}") from exc
     if r.status_code >= 400:
         raise ApiError(r.status_code, _explain(r))
     return None if r.status_code == 204 else r.json()

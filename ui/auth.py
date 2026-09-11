@@ -75,9 +75,9 @@ def _warm_up(box) -> bool:
     for _ in range(60):
         try:
             b = client.boot()
-        except client.Unreachable:
-            box.error("Cannot reach the simulator backend. "
-                      "Is it running? See logs/api.log.", icon="⛔")
+        except client.Unreachable as exc:
+            box.error(f"Cannot reach the simulator backend at "
+                      f"`{client.BASE}`: {exc}", icon="⛔")
             return False
         if b.get("error"):
             box.error(f"The backend failed to start: {b['error']}", icon="⛔")
