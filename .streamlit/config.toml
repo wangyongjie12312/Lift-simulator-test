@@ -1,0 +1,15 @@
+# Lifted from External_function_webUI so the two internal tools look alike.
+[theme]
+base = "light"
+primaryColor = "#FFCD00"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F5F8"
+textColor = "#000000"
+font = "sans serif"
+
+[server]
+headless = true
+fileWatcherType = "auto"
+
+[browser]
+gatherUsageStats = false
