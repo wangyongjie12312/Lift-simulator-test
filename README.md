@@ -22,6 +22,11 @@ streamlit run app.py                 # http://localhost:8501/
 python tests/run_all.py              # 6 physics self-tests + 31 tests
 ```
 
+`ui/client.py` defaults to the deployed Railway backend, which is what
+Streamlit Cloud uses. The launchers below point the UI at the local API; for a
+manual `streamlit run app.py`, set `LIFTSIM_API=http://127.0.0.1:8000/api`
+first. The base URL carries the route prefix: `/api` locally, none on Railway.
+
 On Windows, double-click **Start Simulator.vbs** (no window at all) or
 `run.bat` (a console appears for a few seconds, then closes by itself). Either
 one starts **both** processes through `serve.py` with `pythonw` — no console

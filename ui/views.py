@@ -15,7 +15,7 @@ from typing import Dict, List
 import streamlit as st
 from pydantic import ValidationError
 
-from api.schemas import ClientInputs, SafelinkInputs, SimRequest  # pure pydantic
+from api.schemas import APPLICATIONS, ClientInputs, SafelinkInputs, SimRequest  # pure pydantic
 from . import auth, charts, chrome, data, theme as T
 
 FIG_DIR = Path(__file__).resolve().parent.parent / "web" / "figures"

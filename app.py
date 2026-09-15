@@ -13,36 +13,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import streamlit as st
-import os
-from streamlit.errors import StreamlitSecretNotFoundError
-
-DEFAULT_API_URL = "https://lift-simulator-backend.up.railway.app"
-
-
-def _api_url() -> str:
-    """Use the deployed API unless an explicit usable override is supplied."""
-    try:
-        configured = st.secrets.get("LIFTSIM_API")
-    except StreamlitSecretNotFoundError:
-        configured = None
-    configured = configured or os.environ.get("LIFTSIM_API")
-    value = str(configured or DEFAULT_API_URL).strip().rstrip("/")
-    if value.endswith("/api"):
-        value = value[:-4].rstrip("/")
-    if value.startswith(("http://localhost", "http://127.0.0.1",
-                         "https://localhost", "https://127.0.0.1")):
-        return DEFAULT_API_URL
-    return value
-
-
-API_URL = _api_url()
 
 FIG = Path(__file__).resolve().parent / "web" / "figures"
 st.set_page_config(page_title="Lift Simulator", page_icon=FIG / "sl_logo-init_p.png",
                    layout="wide", initial_sidebar_state="expanded")
 
 from ui import auth, chrome, client, dialogs, theme as T, views   # noqa: E402
-client.BASE = API_URL.rstrip("/")
+
 # The supplied wordmark is white + yellow, made for a dark background. It is
 # used unchanged, on a dark chip, rather than recoloured.
 
