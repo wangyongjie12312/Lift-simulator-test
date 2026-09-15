@@ -3,7 +3,5 @@
 # this floor is deliberate - upgrade with:  pip install -U -r requirements.txt
 streamlit>=1.45
 plotly>=5.20
-fastapi>=0.110
-uvicorn[standard]>=0.27
 pydantic>=2.6
 httpx>=0.27

@@ -1,6 +1,5 @@
 """Safelink Lift Simulator — Streamlit front end.
 
-    python serve.py api          the domain; start this first
     streamlit run app.py         this
 
 The UI holds no domain code and touches no files under data/. Everything goes
@@ -73,7 +72,7 @@ try:
         views.compare()
 except client.Unreachable:
     st.error("Lost contact with the simulator backend. It may have been "
-             "stopped, or it crashed — see `logs/api.log`.",
+             "stopped, or it crashed.",
              icon=":material/error:")
     if st.button("Try again"):
         views.data.clear_caches()

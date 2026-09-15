@@ -1,9 +1,9 @@
 @echo off
 REM Safelink Lift Simulator - launcher.
-REM Two processes: the API (the domain) and the Streamlit UI. The API goes
-REM FIRST - the UI holds no domain code and has nothing to show without it.
-REM Both are started detached (pythonw = no console), so this window closes by
-REM itself and nothing dies with it. Use "Stop Simulator" to stop them.
+REM Starts the Streamlit UI. The API is the separate lift-simulator-backend
+REM repo; the UI talks to it over HTTP (Railway unless LIFTSIM_API is set).
+REM The UI is started detached (pythonw = no console), so this window closes by
+REM itself and nothing dies with it. Use "Stop Simulator" to stop it.
 REM For no window at all, double-click "Start Simulator.vbs" instead.
 setlocal
 cd /d "%~dp0"
@@ -13,10 +13,6 @@ if "%~d0"=="\\" (
   pause & exit /b 1
 )
 
-REM The API listens on 127.0.0.1 only, on purpose: it has no authentication,
-REM so it must never be reachable from the rest of the network. Only the UI
-REM port is meant to be shared.
-set API_PORT=8000
 set UI_PORT=8501
 set PY=python
 set PYW=pythonw
@@ -32,11 +28,7 @@ if not errorlevel 1 (
 )
 
 echo Starting the simulator...
-del /q "logs\api.pid" "logs\server.pid" 2>nul
-start "" "%PYW%" "serve.py" api
-call :waitfor %API_PORT% /api/health 30 "the API"
-if errorlevel 1 goto failed
-
+del /q "logs\server.pid" 2>nul
 start "" "%PYW%" "serve.py" ui
 call :waitfor %UI_PORT% /_stcore/health 40 "the interface"
 if errorlevel 1 goto failed
@@ -62,6 +54,6 @@ timeout /t 1 /nobreak >nul
 goto waitloop
 
 :failed
-echo See logs\api.log and logs\server.log
+echo See logs\server.log
 pause
 exit /b 1

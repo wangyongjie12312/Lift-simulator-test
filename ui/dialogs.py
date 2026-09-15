@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Dict
 from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile
 from xml.etree import ElementTree
-from api.schemas import APPLICATIONS, CaseFilePayload, CaseFileRecord, SimRequest
+from ui.schemas import APPLICATIONS, CaseFilePayload, CaseFileRecord, SimRequest
 from pydantic import ValidationError
 
 import streamlit as st

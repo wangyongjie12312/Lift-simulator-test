@@ -33,8 +33,6 @@ def _detach(name: str) -> None:
 def run_ui() -> None:
     _detach("server")
     # Launched locally, so talk to the local API, not the deployed default.
-    api_port = os.getenv("LIFTSIM_API_PORT", "8000")
-    os.environ.setdefault("LIFTSIM_API", f"http://127.0.0.1:{api_port}/api")
     port = os.getenv("LIFTSIM_PORT", "8501")
     host = os.getenv("LIFTSIM_HOST", "127.0.0.1")
     sys.argv = ["streamlit", "run", str(ROOT / "app.py"),
@@ -44,13 +42,6 @@ def run_ui() -> None:
     main()
 
 
-def run_api() -> None:
-    _detach("api")
-    import uvicorn
-    uvicorn.run("api.main:app", host=os.getenv("LIFTSIM_HOST", "127.0.0.1"),
-                port=int(os.getenv("LIFTSIM_API_PORT", "8000")), log_config=None)
-
-
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "ui"
-    {"api": run_api, "ui": run_ui}[mode]()
+    { "ui": run_ui}[mode]()

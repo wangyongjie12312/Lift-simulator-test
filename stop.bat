@@ -3,7 +3,6 @@ REM Stops the simulator (and the API, if it was started). Safe when not running.
 setlocal
 cd /d "%~dp0"
 call :kill server
-call :kill api
 exit /b 0
 
 :kill
