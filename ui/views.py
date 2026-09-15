@@ -15,7 +15,7 @@ from typing import Dict, List
 import streamlit as st
 from pydantic import ValidationError
 
-from api.schemas import ClientInputs, SafelinkInputs, SimRequest  # pure pydantic
+from api.schemas import APPLICATIONS, ClientInputs, SafelinkInputs, SimRequest  # pure pydantic
 from . import auth, charts, chrome, data, theme as T
 
 FIG_DIR = Path(__file__).resolve().parent.parent / "web" / "figures"
@@ -78,7 +78,7 @@ def build_request() -> Dict | None:
     with st.sidebar:
         chrome.band("Client inputs", "from the job spec")
 
-        with st.expander("Payload info", expanded=True):
+        with st.expander("Payload info", expanded=False):
             c1, c2 = st.columns(2)
             air = c1.number_input("Air wt [kg]", value=255000.0, step=1000.0, key="air_kg")
             wet = c2.number_input("Wet wt [kg]", value=202800.0, step=1000.0, key="wet_kg")
@@ -88,10 +88,10 @@ def build_request() -> Dict | None:
                                  help="Negative is above the waterline.")
             d1 = c2.number_input("Final [m]", value=1380.0, step=10.0, key="final_m")
 
-        with st.expander("Lifting operations", expanded=True):
+        with st.expander("Lifting operations", expanded=False):
             seq = _sequence_editor()
 
-        with st.expander("Environment"):
+        with st.expander("Environment", expanded=False):
             prof = st.selectbox("Sea temperature profile", PROFILES, key="profile")
             c1, c2 = st.columns(2)
             ta = c1.number_input("Air temp [°C]", value=30.0, step=1.0, key="air_c")
@@ -100,10 +100,12 @@ def build_request() -> Dict | None:
         st.markdown("---")
         chrome.band("Safelink inputs", "equipment &amp; setup")
 
-        with st.expander("Unit selection", expanded=True):
+        with st.expander("Unit selection", expanded=False):
             unit_name = _unit_panel()
+            application = st.selectbox("Application", APPLICATIONS,
+                                       key="application")
 
-        with st.expander("System setup"):
+        with st.expander("Unit configuration", expanded=False):
             st.caption("Initial charge [barg]")
             c1, c2 = st.columns(2)
             sz = c1.number_input("SZ", value=84.2, step=.1, key="p_sz")
@@ -118,7 +120,7 @@ def build_request() -> Dict | None:
 
     try:
         return SimRequest(
-            unit_name=unit_name, depth_steps=241,
+            unit_name=unit_name, application=application, depth_steps=241,
             client_inputs=ClientInputs(
                 air_weight_kg=air, wet_weight_kg=wet, payload_height_m=ph,
                 rigging_height_m=rh, start_depth_m=d0, final_depth_m=d1,
@@ -188,7 +190,7 @@ def simulator(req: Dict | None) -> None:
             st.session_state.dialog, st.session_state.dialog_req = "save", req
         if c2.button("Load case", width = "stretch"):
             st.session_state.dialog = "load"
-        if st.button(f"Compare  ({len(st.session_state.compare)}/{T.MAX_CASES})", width = "stretch"):
+        if st.button(f"Compare  ({len(st.session_state.compare)}/{T.MAX_CASES} in new page)", width = "stretch"):
             st.session_state.page = "cmp"
             st.rerun()
 

@@ -57,7 +57,7 @@ with st.sidebar:
         st.session_state.dialog = "signout"
     st.divider()
 
-chrome.title_row(st.session_state.page)
+# chrome.title_row(st.session_state.page)
 auth.idle_watch()
 
 # ---- pages --------------------------------------------------------------

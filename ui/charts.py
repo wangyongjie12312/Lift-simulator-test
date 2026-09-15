@@ -28,14 +28,14 @@ AXIS = dict(
 
 LAYOUT = dict(
     template="simple_white", height=T.CHART_H,
-    margin=dict(l=8, r=14, t=46, b=8),      # automargin does the real work
+    margin=dict(l=8, r=14, t=74, b=8),      # keep the title inside the frame
     hovermode="x unified", showlegend=True,
-    legend=dict(orientation="h", y=1.10, x=.5, xanchor="center",
+    legend=dict(orientation="h", y=1.02, x=.5, xanchor="center",
                 yanchor="bottom", font=dict(size=10.5),
                 bgcolor="rgba(0,0,0,0)"),
     font=dict(family="Montserrat, sans-serif", size=11, color=T.INK2),
-    title=dict(x=.5, xanchor="center", y=.985, yanchor="top",
-               font=dict(size=13, color=T.INK)),
+    title=dict(x=.5, xanchor="center", y=.94, yanchor="top",
+               font=dict(size=16, color=T.INK)),
     plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF",
 )
 

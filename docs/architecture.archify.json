@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Safelink Lift Simulator",
+    "locale": "en",
+    "output": "architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "ui-path", "label": "Browser to data", "focus": ["browser", "streamlit", "client", "api", "core", "data"], "note": "The UI reaches the domain only over HTTP; the API is the single writer of data/." },
+      { "id": "solve-path", "label": "Solve path", "focus": ["orcaflex", "client", "api", "engine", "physics"], "note": "Streamlit and the OrcaFlex external function hit the same /api/simulate contract." },
+      { "id": "fleet-status", "label": "Fleet status", "focus": ["asana", "data", "core"], "note": "A daily cron job snapshots fleet status into unit_status.json (stub today)." }
+    ]
+  },
+  "components": [
+    { "id": "browser", "type": "external", "label": "Browser", "sublabel": "engineers", "pos": [40, 120], "size": [140, 64] },
+    { "id": "streamlit", "type": "frontend", "label": "Streamlit UI", "sublabel": "app.py + ui/", "pos": [40, 300], "size": [140, 64] },
+    { "id": "client", "type": "frontend", "label": "ui/client.py", "sublabel": "httpx", "pos": [300, 300], "size": [140, 64], "tag": "only HTTP boundary" },
+    { "id": "orcaflex", "type": "external", "label": "OrcaFlex EF", "sublabel": "external function", "pos": [560, 120], "size": [140, 64] },
+    { "id": "api", "type": "backend", "label": "FastAPI", "sublabel": "api/ routers", "pos": [560, 300], "size": [140, 64], "tag": "result cache (32)" },
+    { "id": "core", "type": "backend", "label": "core/ domain", "sublabel": "registry · cases", "pos": [820, 300], "size": [140, 64] },
+    { "id": "engine", "type": "backend", "label": "Engine", "sublabel": "placeholder solver", "pos": [560, 470], "size": [140, 64], "tag": "placeholder" },
+    { "id": "physics", "type": "backend", "label": "physics ×6", "sublabel": "ported modules", "pos": [820, 470], "size": [140, 64] },
+    { "id": "data", "type": "database", "label": "data/", "sublabel": "JSON files", "pos": [1080, 300], "size": [140, 64], "tag": "units · cases · status" },
+    { "id": "asana", "type": "backend", "label": "asana_sync", "sublabel": "cron 06:00 (stub)", "pos": [1080, 120], "size": [140, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "UI process · :8501", "wraps": ["streamlit", "client"] },
+    { "kind": "region", "label": "API process · 127.0.0.1:8000", "wraps": ["api", "core", "engine", "physics"] }
+  ],
+  "connections": [
+    { "id": "browser-to-streamlit", "from": "browser", "to": "streamlit", "label": "HTTP :8501", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [110, 198] },
+    { "id": "streamlit-to-client", "from": "streamlit", "to": "client", "label": "cached calls" },
+    { "id": "client-to-api", "from": "client", "to": "api", "label": "HTTP · X-User", "variant": "emphasis" },
+    { "id": "orcaflex-to-api", "from": "orcaflex", "to": "api", "label": "POST /api/simulate", "fromSide": "bottom", "toSide": "top", "labelAt": [630, 198] },
+    { "id": "api-to-core", "from": "api", "to": "core", "label": "load / save" },
+    { "id": "core-to-data", "from": "core", "to": "data", "label": "single writer" },
+    { "id": "api-to-engine", "from": "api", "to": "engine", "label": "simulate()", "fromSide": "bottom", "toSide": "top", "labelAt": [630, 378] },
+    { "id": "engine-to-physics", "from": "engine", "to": "physics", "label": "sea_temperature" },
+    { "id": "asana-to-data", "from": "asana", "to": "data", "label": "unit_status.json", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelAt": [1150, 198] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Process split", "items": ["ui/ and app.py never import core", "ui/client.py is the only module speaking HTTP", "The API is the single writer under data/"] },
+    { "dot": "amber", "title": "Real vs placeholder", "items": ["Real: 6 physics modules, registry, cases, API contract", "Placeholder: all solver output, flagged placeholder: true"] },
+    { "dot": "rose", "title": "Safety", "items": ["API binds 127.0.0.1 only; it has no auth", "/api/simulate is def, runs in the threadpool", "No module-level mutable state in core/"] }
+  ]
+}

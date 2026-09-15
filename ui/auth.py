@@ -164,8 +164,6 @@ def gate() -> bool:
 
 
 # --------------------------------------------------------------- exit
-WARN_S = 60  #: seconds before idle timeout to show a warning
-
 def sign_out() -> None:
     """Clear everything: the next person must not find the previous one's
     case on screen. Saved cases live on disk and are untouched."""
@@ -193,8 +191,14 @@ def idle_watch() -> None:
     if left <= 0:
         sign_out()
     elif left <= WARN_S:
-        st.error(f"No activity for a while — signing out in {int(left)} s.",
-                   icon="⏳")
-        if st.button("Stay signed in", key="stay"):
-            touch()
-            st.rerun()
+        er, bt = st.columns([7, 1], gap="small", vertical_alignment="center")
+        with er:
+            st.html(
+                '<div class="idle-warning" role="alert">'
+                '<span class="idle-warning-icon">⏳</span>'
+                f'<span>No activity for a while — signing out in {int(left)} s.</span>'
+                '</div>')
+        with bt:
+            if st.button("Stay signed in", key="stay"):
+                touch()
+                st.rerun()

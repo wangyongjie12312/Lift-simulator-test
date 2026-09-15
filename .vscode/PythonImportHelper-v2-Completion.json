@@ -2208,7 +2208,7 @@
         "kind": 2,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "def units() -> List[PHCUnit]:\n    with _lock:\n        return list(_units)\ndef replace_units(new: List[PHCUnit], path=DEFAULT_PATH) -> None:\n    with _lock:\n        save_units(new, path)\n        _units[:] = new\ndef mutate(fn, path=DEFAULT_PATH):\n    \"\"\"Apply fn(units) under the lock, re-reading from disk first so a change\n    made by another process is not silently overwritten.\"\"\"",
+        "peekOfCode": "def units() -> List[PHCUnit]:\n    global _units_mtime_ns\n    with _lock:\n        try:\n            mtime_ns = DEFAULT_PATH.stat().st_mtime_ns\n        except FileNotFoundError:\n            mtime_ns = None\n        if mtime_ns != _units_mtime_ns:\n            _units[:] = load_units(DEFAULT_PATH)\n            _units_mtime_ns = mtime_ns",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2217,7 +2217,7 @@
         "kind": 2,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "def replace_units(new: List[PHCUnit], path=DEFAULT_PATH) -> None:\n    with _lock:\n        save_units(new, path)\n        _units[:] = new\ndef mutate(fn, path=DEFAULT_PATH):\n    \"\"\"Apply fn(units) under the lock, re-reading from disk first so a change\n    made by another process is not silently overwritten.\"\"\"\n    with _lock:\n        fresh = load_units(path)\n        result = fn(fresh)",
+        "peekOfCode": "def replace_units(new: List[PHCUnit], path=DEFAULT_PATH) -> None:\n    global _units_mtime_ns\n    with _lock:\n        save_units(new, path)\n        _units[:] = new\n        _units_mtime_ns = path.stat().st_mtime_ns\ndef mutate(fn, path=DEFAULT_PATH):\n    \"\"\"Apply fn(units) under the lock, re-reading from disk first so a change\n    made by another process is not silently overwritten.\"\"\"\n    global _units_mtime_ns",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2226,7 +2226,7 @@
         "kind": 2,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "def mutate(fn, path=DEFAULT_PATH):\n    \"\"\"Apply fn(units) under the lock, re-reading from disk first so a change\n    made by another process is not silently overwritten.\"\"\"\n    with _lock:\n        fresh = load_units(path)\n        result = fn(fresh)\n        save_units(fresh, path)\n        _units[:] = fresh\n        return result\ndef warm_up(path=DEFAULT_PATH) -> None:",
+        "peekOfCode": "def mutate(fn, path=DEFAULT_PATH):\n    \"\"\"Apply fn(units) under the lock, re-reading from disk first so a change\n    made by another process is not silently overwritten.\"\"\"\n    global _units_mtime_ns\n    with _lock:\n        fresh = load_units(path)\n        result = fn(fresh)\n        save_units(fresh, path)\n        _units[:] = fresh\n        _units_mtime_ns = path.stat().st_mtime_ns",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2235,7 +2235,7 @@
         "kind": 2,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "def warm_up(path=DEFAULT_PATH) -> None:\n    \"\"\"Runs in a background thread at startup. Never raises into the server:\n    a failed warm-up must surface as a readable message, not a blank page.\"\"\"\n    t0 = time.perf_counter()\n    try:\n        boot.update(step=1, label=BOOT_STEPS[1])\n        with _lock:\n            _units[:] = load_units(path)\n        boot.update(step=2, label=BOOT_STEPS[2])\n        from core.status import load_status",
+        "peekOfCode": "def warm_up(path=DEFAULT_PATH) -> None:\n    \"\"\"Runs in a background thread at startup. Never raises into the server:\n    a failed warm-up must surface as a readable message, not a blank page.\"\"\"\n    t0 = time.perf_counter()\n    try:\n        boot.update(step=1, label=BOOT_STEPS[1])\n        with _lock:\n            _units[:] = load_units(path)\n            global _units_mtime_ns\n            _units_mtime_ns = path.stat().st_mtime_ns if path.exists() else None",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2262,7 +2262,7 @@
         "kind": 5,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "_lock = threading.RLock()\n_units: List[PHCUnit] = []\nengine = get_engine()\n# --- warm-up ------------------------------------------------------------\n# Named steps, reported as they happen. The sign-in page shows these while\n# the person types; a real step name reads as progress, a spinner does not.\nBOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}",
+        "peekOfCode": "_lock = threading.RLock()\n_units: List[PHCUnit] = []\n_units_mtime_ns: Optional[int] = None\nengine = get_engine()\n# --- warm-up ------------------------------------------------------------\n# Named steps, reported as they happen. The sign-in page shows these while\n# the person types; a real step name reads as progress, a spinner does not.\nBOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2271,7 +2271,7 @@
         "kind": 5,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "engine = get_engine()\n# --- warm-up ------------------------------------------------------------\n# Named steps, reported as they happen. The sign-in page shows these while\n# the person types; a real step name reads as progress, a spinner does not.\nBOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    with _lock:",
+        "peekOfCode": "engine = get_engine()\n# --- warm-up ------------------------------------------------------------\n# Named steps, reported as they happen. The sign-in page shows these while\n# the person types; a real step name reads as progress, a spinner does not.\nBOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    global _units_mtime_ns",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2280,7 +2280,7 @@
         "kind": 5,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "BOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    with _lock:\n        return list(_units)\ndef replace_units(new: List[PHCUnit], path=DEFAULT_PATH) -> None:\n    with _lock:\n        save_units(new, path)",
+        "peekOfCode": "BOOT_STEPS = [\"Starting solver engine\", \"Loading unit registry\",\n              \"Reading fleet status snapshot\", \"Warming compute paths\"]\nboot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    global _units_mtime_ns\n    with _lock:\n        try:\n            mtime_ns = DEFAULT_PATH.stat().st_mtime_ns\n        except FileNotFoundError:",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2289,7 +2289,7 @@
         "kind": 5,
         "importPath": "api.state",
         "description": "api.state",
-        "peekOfCode": "boot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    with _lock:\n        return list(_units)\ndef replace_units(new: List[PHCUnit], path=DEFAULT_PATH) -> None:\n    with _lock:\n        save_units(new, path)\n        _units[:] = new\ndef mutate(fn, path=DEFAULT_PATH):",
+        "peekOfCode": "boot = {\"step\": 0, \"label\": BOOT_STEPS[0], \"total\": len(BOOT_STEPS),\n        \"ready\": False, \"error\": None, \"elapsed_s\": 0.0}\ndef units() -> List[PHCUnit]:\n    global _units_mtime_ns\n    with _lock:\n        try:\n            mtime_ns = DEFAULT_PATH.stat().st_mtime_ns\n        except FileNotFoundError:\n            mtime_ns = None\n        if mtime_ns != _units_mtime_ns:",
         "detail": "api.state",
         "documentation": {}
     },
@@ -2307,7 +2307,7 @@
         "kind": 2,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "def hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"深度 → 绝对环境压力 [bar]。水面以上（负深度）即大气压。\"\"\"\n    if depth_m <= 0.0:\n        return P_ATM_BAR\n    return P_ATM_BAR + RHO_SW * G * depth_m / 1e5\ndef temperature_profile(depths: List[float], case: CaseInputs) -> List[float]:\n    \"\"\"海水温度剖面 [°C]。\n    ``Safelink formula`` 走已移植并验证过的\n    :func:`core.physics.sea_temperature.sea_temperature`；\n    水面以上用空气温度。``Constant`` 全程用表面温度。",
+        "peekOfCode": "def hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"Depth → Absolute environment pressure [bar]. Sea surface (negative depth) is atmospheric pressure.\"\"\"\n    if depth_m <= 0.0:\n        return P_ATM_BAR\n    return P_ATM_BAR + RHO_SW * G * depth_m / 1e5\ndef temperature_profile(depths: List[float], case: CaseInputs) -> List[float]:\n    \"\"\" \n    Depths → Sea water temperature [°C] at each depth. The real engine uses a\n    temperature profile from the vessel's RAO, but the placeholder engine uses a\n    simplified profile based on the case's surface temperature and the Safelink formula. The Safelink formula is a linear approximation of the temperature profile in the ocean, which",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2316,7 +2316,7 @@
         "kind": 2,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "def temperature_profile(depths: List[float], case: CaseInputs) -> List[float]:\n    \"\"\"海水温度剖面 [°C]。\n    ``Safelink formula`` 走已移植并验证过的\n    :func:`core.physics.sea_temperature.sea_temperature`；\n    水面以上用空气温度。``Constant`` 全程用表面温度。\n    ``User table`` 本版未实现，退回 ``Constant`` 并在结果里说明。\n    \"\"\"\n    prof = case.sea_temp_profile\n    out: List[float] = []\n    for d in depths:",
+        "peekOfCode": "def temperature_profile(depths: List[float], case: CaseInputs) -> List[float]:\n    \"\"\" \n    Depths → Sea water temperature [°C] at each depth. The real engine uses a\n    temperature profile from the vessel's RAO, but the placeholder engine uses a\n    simplified profile based on the case's surface temperature and the Safelink formula. The Safelink formula is a linear approximation of the temperature profile in the ocean, which\n    \"\"\"\n    prof = case.sea_temp_profile\n    out: List[float] = []\n    for d in depths:\n        if d <= 0.0:",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2325,7 +2325,7 @@
         "kind": 2,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "def simulate(unit: PHCUnit, case: CaseInputs) -> SimResult:\n    \"\"\"跑一次仿真。\n    Parameters\n    ----------\n    unit\n        选中的补偿器。\n    case\n        全部用户输入。\n    Returns\n    -------",
+        "peekOfCode": "def simulate(unit: PHCUnit, case: CaseInputs) -> SimResult:\n    \"\"\"\n    Run a simulation.\n    param unit: The PHC unit to simulate.\n    param case: The case inputs to simulate.\n    Returns\n    -------\n    SimResult\n    The simulation result, containing depth, temperature, pressures, stroke, gas amounts, KPIs, and verdicts.\n    \"\"\"",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2334,7 +2334,7 @@
         "kind": 5,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "RHO_SW = 1025.0\nG = 9.80665\nP_ATM_BAR = 1.01325\n#: 本版所有非环境列都是合成的\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  真算的部分\n# ---------------------------------------------------------------------------\ndef hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"深度 → 绝对环境压力 [bar]。水面以上（负深度）即大气压。\"\"\"",
+        "peekOfCode": "RHO_SW = 1025.0\nG = 9.80665\nP_ATM_BAR = 1.01325\n#: Only the placeholder engine is implemented, so the UI can run. The real engine\n#: is not reverse-engineered yet. When it is, set this to False and implement the\n#: depth loop in simulate() using the physics/ modules.\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  True physics, for the placeholder engine only. The real engine is not reverse-\n#  engineered yet, so the UI can run with a placeholder engine that returns",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2343,7 +2343,7 @@
         "kind": 5,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "G = 9.80665\nP_ATM_BAR = 1.01325\n#: 本版所有非环境列都是合成的\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  真算的部分\n# ---------------------------------------------------------------------------\ndef hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"深度 → 绝对环境压力 [bar]。水面以上（负深度）即大气压。\"\"\"\n    if depth_m <= 0.0:",
+        "peekOfCode": "G = 9.80665\nP_ATM_BAR = 1.01325\n#: Only the placeholder engine is implemented, so the UI can run. The real engine\n#: is not reverse-engineered yet. When it is, set this to False and implement the\n#: depth loop in simulate() using the physics/ modules.\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  True physics, for the placeholder engine only. The real engine is not reverse-\n#  engineered yet, so the UI can run with a placeholder engine that returns\n#  synthetic data. The physics modules are self-tested and produce the right",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2352,7 +2352,7 @@
         "kind": 5,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "P_ATM_BAR = 1.01325\n#: 本版所有非环境列都是合成的\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  真算的部分\n# ---------------------------------------------------------------------------\ndef hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"深度 → 绝对环境压力 [bar]。水面以上（负深度）即大气压。\"\"\"\n    if depth_m <= 0.0:\n        return P_ATM_BAR",
+        "peekOfCode": "P_ATM_BAR = 1.01325\n#: Only the placeholder engine is implemented, so the UI can run. The real engine\n#: is not reverse-engineered yet. When it is, set this to False and implement the\n#: depth loop in simulate() using the physics/ modules.\nPLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  True physics, for the placeholder engine only. The real engine is not reverse-\n#  engineered yet, so the UI can run with a placeholder engine that returns\n#  synthetic data. The physics modules are self-tested and produce the right\n# ---------------------------------------------------------------------------",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2361,7 +2361,7 @@
         "kind": 5,
         "importPath": "core.engine.placeholder",
         "description": "core.engine.placeholder",
-        "peekOfCode": "PLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  真算的部分\n# ---------------------------------------------------------------------------\ndef hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"深度 → 绝对环境压力 [bar]。水面以上（负深度）即大气压。\"\"\"\n    if depth_m <= 0.0:\n        return P_ATM_BAR\n    return P_ATM_BAR + RHO_SW * G * depth_m / 1e5\ndef temperature_profile(depths: List[float], case: CaseInputs) -> List[float]:",
+        "peekOfCode": "PLACEHOLDER = True\n# ---------------------------------------------------------------------------\n#  True physics, for the placeholder engine only. The real engine is not reverse-\n#  engineered yet, so the UI can run with a placeholder engine that returns\n#  synthetic data. The physics modules are self-tested and produce the right\n# ---------------------------------------------------------------------------\ndef hydrostatic_bar(depth_m: float) -> float:\n    \"\"\"Depth → Absolute environment pressure [bar]. Sea surface (negative depth) is atmospheric pressure.\"\"\"\n    if depth_m <= 0.0:\n        return P_ATM_BAR",
         "detail": "core.engine.placeholder",
         "documentation": {}
     },
@@ -2370,7 +2370,7 @@
         "kind": 6,
         "importPath": "core.engine.result",
         "description": "core.engine.result",
-        "peekOfCode": "class SimResult:\n    \"\"\"一次仿真的完整输出。列名与旧程序前面板指示器一一对应。\"\"\"\n    depth_m: List[float] = field(default_factory=list)\n    T_c: List[float] = field(default_factory=list)\n    P_env_bar: List[float] = field(default_factory=list)\n    P_oil_barg: List[float] = field(default_factory=list)\n    P_sz_barg: List[float] = field(default_factory=list)\n    P_ss_barg: List[float] = field(default_factory=list)\n    P_hp_barg: List[float] = field(default_factory=list)\n    stroke_m: List[float] = field(default_factory=list)",
+        "peekOfCode": "class SimResult:\n    \"\"\"The shape of a simulation answer.\"\"\"\n    depth_m: List[float] = field(default_factory=list)\n    T_c: List[float] = field(default_factory=list)\n    P_env_bar: List[float] = field(default_factory=list)\n    P_oil_barg: List[float] = field(default_factory=list)\n    P_sz_barg: List[float] = field(default_factory=list)\n    P_ss_barg: List[float] = field(default_factory=list)\n    P_hp_barg: List[float] = field(default_factory=list)\n    stroke_m: List[float] = field(default_factory=list)",
         "detail": "core.engine.result",
         "documentation": {}
     },
@@ -3234,7 +3234,7 @@
         "kind": 2,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "def gate() -> bool:\n    \"\"\"Draw the sign-in page. Returns True once somebody is signed in.\"\"\"\n    if st.session_state.get(\"user\"):\n        return True\n    left, right = st.columns([1.35, 1], gap=\"large\")\n    with left:\n        _showcase()\n    with right:\n        logo = SHOWCASE_DIR.parent / \"safelink_logo_chip.png\"\n        if logo.exists():",
+        "peekOfCode": "def gate() -> bool:\n    \"\"\"Draw the sign-in page. Returns True once somebody is signed in.\"\"\"\n    if st.session_state.get(\"user\"):\n        return True\n    left, right = st.columns([1.35, 1], gap=\"large\")\n    with left:\n        _showcase()\n    with right:\n        _,lc,_ = st.columns([1,2, 1], gap=\"large\")\n        with lc:",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3252,7 +3252,7 @@
         "kind": 2,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "def touch() -> None:\n    st.session_state.last_seen = time.time()\ndef check_idle() -> None:\n    if time.time() - st.session_state.get(\"last_seen\", time.time()) > IDLE_S:\n        st.session_state.signed_out_reason = (\n            f\"Signed out after {IDLE_S // 60} minutes without activity. \"\n            \"Saved cases are unaffected.\")\n        sign_out()\n@st.fragment(run_every=\"5s\")\ndef idle_watch() -> None:",
+        "peekOfCode": "def touch() -> None:\n    st.session_state.last_seen = time.time()\ndef check_idle() -> None:\n    if time.time() - st.session_state.get(\"last_seen\", time.time()) > IDLE_S:\n        st.session_state.signed_out_reason = (\n            f\"Signed out after {IDLE_S // 60} minutes without activity. \"\n            \"Saved cases are unaffected.\")\n        sign_out()\n@st.fragment(run_every=\"2s\")\ndef idle_watch() -> None:",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3261,7 +3261,7 @@
         "kind": 2,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "def check_idle() -> None:\n    if time.time() - st.session_state.get(\"last_seen\", time.time()) > IDLE_S:\n        st.session_state.signed_out_reason = (\n            f\"Signed out after {IDLE_S // 60} minutes without activity. \"\n            \"Saved cases are unaffected.\")\n        sign_out()\n@st.fragment(run_every=\"5s\")\ndef idle_watch() -> None:\n    left = IDLE_S - (time.time() - st.session_state.get(\"last_seen\", time.time()))\n    if left <= 0:",
+        "peekOfCode": "def check_idle() -> None:\n    if time.time() - st.session_state.get(\"last_seen\", time.time()) > IDLE_S:\n        st.session_state.signed_out_reason = (\n            f\"Signed out after {IDLE_S // 60} minutes without activity. \"\n            \"Saved cases are unaffected.\")\n        sign_out()\n@st.fragment(run_every=\"2s\")\ndef idle_watch() -> None:\n    left = IDLE_S - (time.time() - st.session_state.get(\"last_seen\", time.time()))\n    if left <= 0:",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3279,7 +3279,7 @@
         "kind": 5,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "SHOWCASE_DIR = Path(__file__).resolve().parent.parent / \"web\" / \"figures\" / \"showcase\"\nSLIDES = [\n    (\"phc.jpg\", \"Passive heave compensators\",\n     \"Gas-spring units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"\n     \"splash zone to the seabed.\",\n     [\"In air\", \"Splash zone\", \"Subsea\", \"Landing\"]),\n    (\"ga.png\", \"Every unit is documented\",\n     \"The catalogue carries a dimensioned general arrangement for each unit, \"\n     \"alongside the twelve parameters the simulator solves with.\",",
+        "peekOfCode": "SHOWCASE_DIR = Path(__file__).resolve().parent.parent / \"web\" / \"figures\" / \"showcase\"\nSLIDES = [\n    (\"PHC01.jpg\", \"Passive heave compensators\",\n     \"Gas-spring units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"\n     \"splash zone to the seabed.\",\n     [\"In air\", \"Splash zone\", \"Subsea\", \"Landing\"]),\n    (\"PHC02.jpg\", \"Passive heave compensators\",\n     \"Hydraulic units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3288,7 +3288,7 @@
         "kind": 5,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "SLIDES = [\n    (\"phc.jpg\", \"Passive heave compensators\",\n     \"Gas-spring units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"\n     \"splash zone to the seabed.\",\n     [\"In air\", \"Splash zone\", \"Subsea\", \"Landing\"]),\n    (\"ga.png\", \"Every unit is documented\",\n     \"The catalogue carries a dimensioned general arrangement for each unit, \"\n     \"alongside the twelve parameters the simulator solves with.\",\n     [\"GA drawing\", \"12 parameters\", \"Serial traceable\"]),",
+        "peekOfCode": "SLIDES = [\n    (\"PHC01.jpg\", \"Passive heave compensators\",\n     \"Gas-spring units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"\n     \"splash zone to the seabed.\",\n     [\"In air\", \"Splash zone\", \"Subsea\", \"Landing\"]),\n    (\"PHC02.jpg\", \"Passive heave compensators\",\n     \"Hydraulic units that decouple the load from vessel motion. Sized by \"\n     \"stroke and compensation capacity, deployed from in-air through the \"\n     \"splash zone to the seabed.\",",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3297,7 +3297,7 @@
         "kind": 5,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "IDLE_S = 5 * 60\nWARN_S = 30\n# --------------------------------------------------------------- gate\ndef _warm_up(box) -> bool:\n    \"\"\"The warm-up happens in the API process; this only reports it. Real step\n    names and a real count - the person is typing anyway, so the wait is free.\n    Returns False when the backend cannot be reached at all.\"\"\"\n    for _ in range(60):\n        try:\n            b = client.boot()",
+        "peekOfCode": "IDLE_S = 5 * 60\nWARN_S = 30\nTEST_ACCOUNTS = {\n    \"admin\": \"password123\",\n    \"user\": \"user123\",\n    \"demo\": \"demo\",\n}\n# --------------------------------------------------------------- gate\ndef _warm_up(box) -> bool:\n    \"\"\"The warm-up happens in the API process; this only reports it. Real step",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3306,7 +3306,16 @@
         "kind": 5,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "WARN_S = 30\n# --------------------------------------------------------------- gate\ndef _warm_up(box) -> bool:\n    \"\"\"The warm-up happens in the API process; this only reports it. Real step\n    names and a real count - the person is typing anyway, so the wait is free.\n    Returns False when the backend cannot be reached at all.\"\"\"\n    for _ in range(60):\n        try:\n            b = client.boot()\n        except client.Unreachable:",
+        "peekOfCode": "WARN_S = 30\nTEST_ACCOUNTS = {\n    \"admin\": \"password123\",\n    \"user\": \"user123\",\n    \"demo\": \"demo\",\n}\n# --------------------------------------------------------------- gate\ndef _warm_up(box) -> bool:\n    \"\"\"The warm-up happens in the API process; this only reports it. Real step\n    names and a real count - the person is typing anyway, so the wait is free.",
+        "detail": "ui.auth",
+        "documentation": {}
+    },
+    {
+        "label": "TEST_ACCOUNTS",
+        "kind": 5,
+        "importPath": "ui.auth",
+        "description": "ui.auth",
+        "peekOfCode": "TEST_ACCOUNTS = {\n    \"admin\": \"password123\",\n    \"user\": \"user123\",\n    \"demo\": \"demo\",\n}\n# --------------------------------------------------------------- gate\ndef _warm_up(box) -> bool:\n    \"\"\"The warm-up happens in the API process; this only reports it. Real step\n    names and a real count - the person is typing anyway, so the wait is free.\n    Returns False when the backend cannot be reached at all.\"\"\"",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3333,7 +3342,7 @@
         "kind": 2,
         "importPath": "ui.charts",
         "description": "ui.charts",
-        "peekOfCode": "def show(fig: go.Figure, key: str, st) -> None:\n    st.plotly_chart(fig, use_container_width=True, key=key,\n                    config={\"displaylogo\": False,\n                            \"modeBarButtonsToRemove\": [\"select2d\", \"lasso2d\"],\n                            \"toImageButtonOptions\": {\"format\": \"png\", \"scale\": 2}})",
+        "peekOfCode": "def show(fig: go.Figure, key: str, st) -> None:\n    st.plotly_chart(fig, width = \"stretch\", key=key,\n                    config={\"displaylogo\": False,\n                            \"modeBarButtonsToRemove\": [\"select2d\", \"lasso2d\"],\n                            \"toImageButtonOptions\": {\"format\": \"png\", \"scale\": 2}})",
         "detail": "ui.charts",
         "documentation": {}
     },
@@ -3360,7 +3369,7 @@
         "kind": 2,
         "importPath": "ui.chrome",
         "description": "ui.chrome",
-        "peekOfCode": "def title_row(page: str) -> None:\n    \"\"\"SAFELINK · Lift Simulator, with the demo badge on the right.\n    line-height and padding are explicit: the default line box clips the\n    descenders of a letter-spaced 17px face on some platforms.\n    \"\"\"\n    where = \"\" if page == \"sim\" else \" &nbsp;·&nbsp; Compare cases\"\n    left, right = st.columns([5, 1.7], vertical_alignment=\"center\")\n    left.html(f'<div style=\"line-height:1.6;padding:6px 0 10px;white-space:nowrap;'\n        f'overflow:visible\">'\n        f'<span style=\"font-weight:700;font-size:17px;letter-spacing:.14em;'",
+        "peekOfCode": "def title_row(page: str) -> None:\n    \"\"\"SAFELINK · Lift Simulator, with the demo badge on the right.\n    line-height and padding are explicit: the default line box clips the\n    descenders of a letter-spaced 17px face on some platforms.\n    \"\"\"\n    where = \"\" if page == \"sim\" else \" &nbsp;·&nbsp; Compare cases\"\n    left, right = st.columns([1, 1.7], vertical_alignment=\"center\")\n    left.html(f'<div style=\"line-height:1.6;padding:6px 0 10px;white-space:nowrap;'\n        f'overflow:visible\">'\n        f'<span style=\"font-weight:700;font-size:17px;letter-spacing:.14em;'",
         "detail": "ui.chrome",
         "documentation": {}
     },
@@ -3792,7 +3801,7 @@
         "kind": 5,
         "importPath": "ui.theme",
         "description": "ui.theme",
-        "peekOfCode": "MAX_CASES = len(CASE_STYLE)\nCSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"] {{width:410px !important; min-width:410px !important}}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}\n  .who {{padding-top:.55rem; white-space:nowrap}}\n  h1, h2, h3 {{letter-spacing:.01em}}",
+        "peekOfCode": "MAX_CASES = len(CASE_STYLE)\nCSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}",
         "detail": "ui.theme",
         "documentation": {}
     },
@@ -3801,7 +3810,7 @@
         "kind": 5,
         "importPath": "ui.theme",
         "description": "ui.theme",
-        "peekOfCode": "CSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"] {{width:410px !important; min-width:410px !important}}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}\n  .who {{padding-top:.55rem; white-space:nowrap}}\n  h1, h2, h3 {{letter-spacing:.01em}}\n  /* band heading: the rule under it is the divider */",
+        "peekOfCode": "CSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}\n  .who {{padding-top:.55rem; white-space:nowrap}}",
         "detail": "ui.theme",
         "documentation": {}
     },
@@ -3819,7 +3828,7 @@
         "kind": 2,
         "importPath": "ui.views",
         "description": "ui.views",
-        "peekOfCode": "def simulator(req: Dict | None) -> None:\n    res = st.session_state.get(\"result\")\n    # A case is inputs TOGETHER WITH the results they produced. Comparing the\n    # request that produced the result against the one on screen is the whole\n    # staleness rule - no bookkeeping, and a reload cannot lose it.\n    fresh = bool(res) and req is not None and st.session_state.get(\"result_req\") == req\n    with st.sidebar:\n        st.markdown(\"---\")\n        if st.button(\"▶  Run simulation\", type=\"primary\",\n                     use_container_width=True, disabled=req is None):",
+        "peekOfCode": "def simulator(req: Dict | None) -> None:\n    res = st.session_state.get(\"result\")\n    # A case is inputs TOGETHER WITH the results they produced. Comparing the\n    # request that produced the result against the one on screen is the whole\n    # staleness rule - no bookkeeping, and a reload cannot lose it.\n    fresh = bool(res) and req is not None and st.session_state.get(\"result_req\") == req\n    with st.sidebar:\n        st.markdown(\"---\")\n        if st.button(\"▶  Run simulation\", type=\"primary\",\n                     width = \"stretch\", disabled=req is None):",
         "detail": "ui.views",
         "documentation": {}
     },
@@ -3837,7 +3846,7 @@
         "kind": 2,
         "importPath": "ui.views",
         "description": "ui.views",
-        "peekOfCode": "def compare() -> None:\n    cases = st.session_state.compare\n    with st.sidebar:\n        chrome.band(\"Cases\")\n        if not cases:\n            st.caption(\"Nothing added yet. Run a simulation, then \"\n                       \"**Add to compare**.\")\n        for c in list(cases):\n            tag, colour, _ = T.CASE_STYLE[c[\"slot\"]]\n            c1, c2, c3 = st.columns([.5, 4, .7])",
+        "peekOfCode": "def compare() -> None:\n    cases = st.session_state.compare\n    with st.sidebar:\n        chrome.band(\"Cases to compare\")\n        if not cases:\n            st.caption(\"Nothing added yet. Run a simulation, then **Add to compare**.\")\n        for c in list(cases):\n            tag, colour, _ = T.CASE_STYLE[c[\"slot\"]]\n            c1, c2, c3 = st.columns([.5, 4, .7])\n            c[\"on\"] = c1.checkbox(\"​\", value=c[\"on\"], key=f\"on{c['id']}\", label_visibility=\"collapsed\")",
         "detail": "ui.views",
         "documentation": {}
     },
@@ -3891,7 +3900,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "FIG = Path(__file__).resolve().parent / \"web\" / \"figures\"\n# The supplied wordmark is white + yellow, made for a dark background. It is\n# used unchanged, on a dark chip, rather than recoloured.\nst.logo(str(FIG / \"safelink_logo_chip.png\"),\n        icon_image=str(FIG / \"safelink_mark.png\"), size=\"large\")\nT.inject()\nst.session_state.setdefault(\"compare\", [])\nst.session_state.setdefault(\"page\", \"sim\")\nst.session_state.setdefault(\"dialog\", None)\nif not auth.gate():",
+        "peekOfCode": "FIG = Path(__file__).resolve().parent / \"web\" / \"figures\"\nst.set_page_config(page_title=\"Lift Simulator\", page_icon=FIG / \"sl_logo-init_p.png\",\n                   layout=\"wide\", initial_sidebar_state=\"expanded\")\nfrom ui import auth, chrome, client, dialogs, theme as T, views   # noqa: E402\n# The supplied wordmark is white + yellow, made for a dark background. It is\n# used unchanged, on a dark chip, rather than recoloured.\nT.inject()\nst.session_state.setdefault(\"compare\", [])\nst.session_state.setdefault(\"page\", \"sim\")\nst.session_state.setdefault(\"dialog\", None)",
         "detail": "app",
         "documentation": {}
     },
@@ -3900,7 +3909,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "msg = st.session_state.pop(\"toast_msg\", None)\nif msg:\n    st.toast(msg)\n# ---- sidebar head -------------------------------------------------------\nwith st.sidebar:\n    chrome.sidebar_head(st.session_state.user)\n    c1, c2 = st.columns(2)\n    # Buttons only RECORD which dialog to open; the dialog itself is opened at\n    # the bottom of this file, outside every layout container. Opening one from\n    # inside `with st.sidebar` leaves its placement up to the version.",
+        "peekOfCode": "msg = st.session_state.pop(\"toast_msg\", None)\nif msg:\n    st.toast(msg)\n# ---- sidebar head -------------------------------------------------------\nwith st.sidebar:\n    _,lc,_ = st.columns([1,3,1])\n    with lc:\n        st.image(str(FIG / \"sl_logo.png\"), width=\"stretch\")\n    # add vertical space between logo and title row, so that the title row is not too close to the logo\n    st.html('<div style=\"height:.6rem\"></div>')",
         "detail": "app",
         "documentation": {}
     },
@@ -3909,7 +3918,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "req = None\ntry:\n    req = views.build_request()          # the rail draws itself into the sidebar\n    if st.session_state.page == \"sim\":\n        views.simulator(req)\n    else:\n        views.compare()\nexcept client.Unreachable:\n    st.error(\"Lost contact with the simulator backend. It may have been \"\n             \"stopped, or it crashed — see `logs/api.log`.\", icon=\"⛔\")",
+        "peekOfCode": "req = None\ntry:\n    if st.session_state.page == \"sim\":\n        req = views.build_request()      # the rail is only part of Simulator\n        views.simulator(req)\n    else:\n        views.compare()\nexcept client.Unreachable:\n    st.error(\"Lost contact with the simulator backend. It may have been \"\n             \"stopped, or it crashed — see `logs/api.log`.\", icon=\"⛔\")",
         "detail": "app",
         "documentation": {}
     },

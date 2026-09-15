@@ -101,6 +101,11 @@ CSS = f"""
   section[data-testid="stSidebar"] div[data-testid="stMetricValue"] {{font-size:15px}}
   section[data-testid="stSidebar"] div[data-testid="stMetricLabel"] p {{font-size:10.5px}}
   div[data-testid="stMetricValue"] {{font-size:21px}}
+  .idle-warning {{box-sizing:border-box; min-height:48px; width:100%;
+    display:flex; align-items:center; gap:9px; padding:10px 14px;
+    border-radius:6px; background:#FDE7E7; color:{BAD};
+    font-size:14px; line-height:1.35; overflow:visible}}
+  .idle-warning-icon {{flex:none; line-height:1.35}}
 </style>
 """
 

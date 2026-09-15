@@ -21,17 +21,17 @@ def title_row(page: str) -> None:
     descenders of a letter-spaced 17px face on some platforms.
     """
     where = "" if page == "sim" else " &nbsp;·&nbsp; Compare cases"
-    left, right = st.columns([5, 1.7], vertical_alignment="center")
+    left, right = st.columns([1, 1.7], vertical_alignment="center")
     left.html(f'<div style="line-height:1.6;padding:6px 0 10px;white-space:nowrap;'
         f'overflow:visible">'
         f'<span style="font-weight:700;font-size:17px;letter-spacing:.14em;'
         f'color:{T.ACCENT_FG}">SAFELINK</span>'
         f'<span style="font-weight:500;font-size:15px;color:{T.INK2};'
         f'margin-left:14px">Lift Simulator{where}</span></div>')
-    # right.html(f'<div style="text-align:right;line-height:1.6;padding:6px 0 10px">'
-    #     f'<span style="border:1px solid {T.WARN};color:{T.WARN};padding:3px 9px;'
-    #     f'font-size:11px;font-weight:600;letter-spacing:.08em;'
-    #     f'white-space:nowrap">DEMO · illustrative data</span></div>')
+    right.html(f'<div style="text-align:right;line-height:1.6;padding:6px 0 10px">'
+        f'<span style="border:1px solid {T.WARN};color:{T.WARN};padding:3px 9px;'
+        f'font-size:11px;font-weight:600;letter-spacing:.08em;'
+        f'white-space:nowrap">DEMO · illustrative data</span></div>')
 
 
 def sidebar_head(user: str) -> None:
@@ -51,11 +51,13 @@ def sidebar_head(user: str) -> None:
 def band(title: str, sub: str = "") -> None:
     """Section heading with its rule. Inline, for the same reason as above."""
     st.html(f'<div style="display:flex;align-items:baseline;gap:9px;'
-        f'margin:.2rem 0 .6rem;font-size:11px;font-weight:700;'
+        f'margin:.2rem 0 .6rem;font-size:14px;font-weight:700;'
         f'letter-spacing:.13em;text-transform:uppercase;color:{T.ACCENT_FG};'
-        f'border-bottom:1px solid {T.LINE_SOFT};padding-bottom:6px;'
-        f'line-height:1.7">{title}'
+          f'border-bottom:1px solid {T.LINE_SOFT};box-sizing:border-box;'
+          f'min-height:34px;padding:5px 0 7px;line-height:1.35;'
+          f'overflow:visible">{title}'
         + (f'<span style="margin-left:auto;font-size:10.5px;font-weight:400;'
-           f'letter-spacing:.02em;text-transform:none;color:{T.INK3}">{sub}</span>'
+              f'letter-spacing:.02em;text-transform:none;color:{T.INK3};'
+              f'line-height:1.35;white-space:nowrap">{sub}</span>'
            if sub else "")
         + '</div>')

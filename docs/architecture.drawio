@@ -1,0 +1,73 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram id="lift-simulator-architecture" name="Safelink Lift Simulator">
+    <mxGraphModel dx="1424" dy="832" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1260" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ui-region" parent="1" style="rounded=1;arcSize=4;dashed=1;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#a16207;verticalAlign=top;align=left;spacingLeft=8;fontStyle=1;" value="UI process · :8501" vertex="1">
+          <mxGeometry height="118" width="440" x="20" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="api-region" parent="1" style="rounded=1;arcSize=3;dashed=1;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#a16207;verticalAlign=top;align=left;spacingLeft=8;fontStyle=1;" value="API process · 127.0.0.1:8000" vertex="1">
+          <mxGeometry height="288" width="440" x="540" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#6b7280;fontColor=#111827;" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;engineers&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="40" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="streamlit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cffafe;strokeColor=#0891b2;fontColor=#083344;" value="&lt;b&gt;Streamlit UI&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;app.py + ui/&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cffafe;strokeColor=#0891b2;fontColor=#083344;" value="&lt;b&gt;ui/client.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;httpx · only HTTP boundary&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="300" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="orcaflex" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#6b7280;fontColor=#111827;" value="&lt;b&gt;OrcaFlex EF&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;external function&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="560" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontColor=#022c22;" value="&lt;b&gt;FastAPI&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;api/ routers · result cache (32)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="560" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="core" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontColor=#022c22;" value="&lt;b&gt;core/ domain&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;registry · cases&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="820" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="engine" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontColor=#022c22;" value="&lt;b&gt;Engine&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;placeholder solver&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="560" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="physics" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontColor=#022c22;" value="&lt;b&gt;physics ×6&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;ported modules&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="820" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="data" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;size=10;fillColor=#ede9fe;strokeColor=#7c3aed;fontColor=#2e1065;" value="&lt;b&gt;data/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;units · cases · status&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="140" x="1080" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="asana" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontColor=#022c22;" value="&lt;b&gt;asana_sync&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;cron 06:00 (stub)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="64" width="140" x="1080" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="browser-to-streamlit" edge="1" parent="1" source="browser" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#059669;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=10;" target="streamlit" value="HTTP :8501">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="streamlit-to-client" edge="1" parent="1" source="streamlit" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;labelBackgroundColor=#ffffff;fontSize=10;" target="client" value="cached calls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="client-to-api" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#059669;labelBackgroundColor=#ffffff;fontSize=10;" target="api" value="HTTP · X-User">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="orcaflex-to-api" edge="1" parent="1" source="orcaflex" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=10;" target="api" value="POST /api/simulate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-to-core" edge="1" parent="1" source="api" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;labelBackgroundColor=#ffffff;fontSize=10;" target="core" value="load / save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="core-to-data" edge="1" parent="1" source="core" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;labelBackgroundColor=#ffffff;fontSize=10;" target="data" value="single writer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-to-engine" edge="1" parent="1" source="api" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=10;" target="engine" value="simulate()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="engine-to-physics" edge="1" parent="1" source="engine" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#64748b;labelBackgroundColor=#ffffff;fontSize=10;" target="physics" value="sea_temperature">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="asana-to-data" edge="1" parent="1" source="asana" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#7c3aed;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=10;" target="data" value="unit_status.json">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
