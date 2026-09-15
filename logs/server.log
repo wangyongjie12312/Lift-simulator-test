@@ -18,3 +18,114 @@ Traceback (most recent call last):
     except (ValueError, KeyError, json.JSONDecodeError, ElementTree.ParseError,
     ^^^^^^
 SyntaxError: invalid syntax
+2026-09-15 11:02:00.412 Uncaught app execution
+Traceback (most recent call last):
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 789, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\app.py", line 55, in <module>
+    if not auth.gate():
+           ~~~~~~~~~^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 139, in gate
+    ok = _warm_up(st.empty())
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 77, in _warm_up
+    b = client.boot()
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 71, in boot
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 59, in _call
+    return None if r.status_code == 204 else r.json()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ui.client.ApiError: Not Found
+2026-09-15 11:02:04.122 Uncaught app execution
+Traceback (most recent call last):
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 789, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\app.py", line 55, in <module>
+    if not auth.gate():
+           ~~~~~~~~~^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 139, in gate
+    ok = _warm_up(st.empty())
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 77, in _warm_up
+    b = client.boot()
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 71, in boot
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 59, in _call
+    return None if r.status_code == 204 else r.json()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ui.client.ApiError: Not Found
+2026-09-15 11:02:09.001 Uncaught app execution
+Traceback (most recent call last):
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 789, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\app.py", line 55, in <module>
+    if not auth.gate():
+           ~~~~~~~~~^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 139, in gate
+    ok = _warm_up(st.empty())
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 77, in _warm_up
+    b = client.boot()
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 71, in boot
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 59, in _call
+    return None if r.status_code == 204 else r.json()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ui.client.ApiError: Not Found
+2026-09-15 11:04:19.820 Uncaught app execution
+Traceback (most recent call last):
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "C:\Users\YongjieWang-Safelink\AppData\Local\Programs\Python\Python314\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 789, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\app.py", line 55, in <module>
+    if not auth.gate():
+           ~~~~~~~~~^^
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 139, in gate
+    ok = _warm_up(st.empty())
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\auth.py", line 77, in _warm_up
+    b = client.boot()
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 71, in boot
+  File "C:\Users\YongjieWang-Safelink\OneDrive - Safelink AS\Documents\GitHub\Lift-simulator\ui\client.py", line 59, in _call
+    return None if r.status_code == 204 else r.json()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ui.client.ApiError: Not Found
+2026-09-15 12:16:36.470 An update to the [server] config option section was detected. To have these changes be reflected, please restart streamlit.
+2026-09-15 12:16:39.727 127.0.0.1:2209 - "GET /media/02d81c7a3053bf4e96165860e18691f8.jpg HTTP/1.1" 200
+2026-09-15 12:16:39.796 127.0.0.1:2209 - "GET /app/static/Montserrat-VariableFont_wght.ttf HTTP/1.1" 200
+2026-09-15 12:17:54.651 127.0.0.1:10327 - "GET / HTTP/1.1" 304
+2026-09-15 12:17:55.539 127.0.0.1:10327 - "GET /_stcore/health HTTP/1.1" 200
+2026-09-15 12:17:55.592 127.0.0.1:12317 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-09-15 12:17:56.678 127.0.0.1:10071 - "WebSocket /_stcore/stream" [accepted]
+2026-09-15 12:17:56.678 connection open
+2026-09-15 12:17:56.781 127.0.0.1:12317 - "GET /app/static/Montserrat-VariableFont_wght.ttf HTTP/1.1" 200
+2026-09-15 12:17:56.900 127.0.0.1:12317 - "GET /media/5f4339a36dd2c9b504c6ca7d080dfa8a.png HTTP/1.1" 200
+2026-09-15 12:17:57.108 127.0.0.1:12317 - "GET /media/77a3f188ead324fbece9c104ee3fe371.jpg HTTP/1.1" 200
+2026-09-15 12:17:57.117 127.0.0.1:12317 - "GET /media/e4e390b68f76bab8bc665fa98fbde2d1.png HTTP/1.1" 200
+2026-09-15 12:18:01.826 127.0.0.1:12317 - "GET /media/543e1a94e48900264da9589bd136a881.jpg HTTP/1.1" 200
+2026-09-15 12:18:02.172 127.0.0.1:7938 - "GET /media/543e1a94e48900264da9589bd136a881.jpg HTTP/1.1" 200
+2026-09-15 12:18:06.295 127.0.0.1:12317 - "GET /media/4c37d50ef2bb1f491f34a60f7cd4273d.jpg HTTP/1.1" 200
+2026-09-15 12:18:57.465 127.0.0.1:4393 - "GET /media/f3b5355b4e8b8e6883115c10b841d925.png HTTP/1.1" 200
+2026-09-15 12:18:59.239 127.0.0.1:13589 - "GET /media/f3b5355b4e8b8e6883115c10b841d925.png HTTP/1.1" 200
+2026-09-15 12:19:02.968 127.0.0.1:3250 - "GET / HTTP/1.1" 304
+2026-09-15 12:19:03.421 127.0.0.1:3250 - "GET /_stcore/health HTTP/1.1" 200
+2026-09-15 12:19:03.430 127.0.0.1:3250 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-09-15 12:19:03.692 127.0.0.1:3137 - "WebSocket /_stcore/stream" [accepted]
+2026-09-15 12:19:03.693 connection open
+2026-09-15 12:19:03.767 127.0.0.1:3250 - "GET /app/static/Montserrat-VariableFont_wght.ttf HTTP/1.1" 200
+2026-09-15 12:19:03.879 127.0.0.1:3250 - "GET /media/5f4339a36dd2c9b504c6ca7d080dfa8a.png HTTP/1.1" 200
+2026-09-15 12:19:03.995 127.0.0.1:3250 - "GET /media/e4e390b68f76bab8bc665fa98fbde2d1.png HTTP/1.1" 200
+2026-09-15 12:19:04.054 127.0.0.1:3250 - "GET /media/77a3f188ead324fbece9c104ee3fe371.jpg HTTP/1.1" 200
+2026-09-15 12:19:10.033 127.0.0.1:1071 - "GET /media/543e1a94e48900264da9589bd136a881.jpg HTTP/1.1" 200
+2026-09-15 12:19:12.255 127.0.0.1:13305 - "GET /media/543e1a94e48900264da9589bd136a881.jpg HTTP/1.1" 200
+2026-09-15 12:19:16.134 127.0.0.1:7821 - "GET /media/f3b5355b4e8b8e6883115c10b841d925.png HTTP/1.1" 200
+2026-09-15 12:19:22.859 127.0.0.1:4121 - "GET /media/02d81c7a3053bf4e96165860e18691f8.jpg HTTP/1.1" 200
+2026-09-15 12:19:28.842 127.0.0.1:4024 - "GET /media/158fb13d890db89822f05322bc579799.png HTTP/1.1" 200
+2026-09-15 12:19:35.020 127.0.0.1:2312 - "GET /media/df766a314708228255f411d761b00afd.jpg HTTP/1.1" 200
+2026-09-15 12:19:40.875 127.0.0.1:4009 - "GET /media/77a3f188ead324fbece9c104ee3fe371.jpg HTTP/1.1" 200
+2026-09-15 12:21:30.323 An update to the [server] config option section was detected. To have these changes be reflected, please restart streamlit.
+2026-09-15 12:22:29.158 127.0.0.1:13617 - "GET /media/02d81c7a3053bf4e96165860e18691f8.jpg HTTP/1.1" 200
