@@ -34,6 +34,8 @@ MAX_CASES = len(CASE_STYLE)
 
 CSS = f"""
 <style>
+  body {{line-height:1.5}}
+  .stMarkdown li > p {{margin:0}}
   .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}
   section[data-testid="stSidebar"][aria-expanded="true"] {{
     width:410px !important; min-width:410px !important;
@@ -101,6 +103,22 @@ CSS = f"""
   section[data-testid="stSidebar"] div[data-testid="stMetricValue"] {{font-size:15px}}
   section[data-testid="stSidebar"] div[data-testid="stMetricLabel"] p {{font-size:10.5px}}
   div[data-testid="stMetricValue"] {{font-size:21px}}
+  /* Formal action treatment from the supplied style guide. Keep primary and
+     secondary actions visually equivalent so the button meaning is explicit. */
+  button[kind="primary"], button[kind="secondary"],
+  button[kind="secondaryFormSubmit"] {{
+    background:{ACCENT}; color:#000; border:0; min-height:3rem;
+  }}
+  button[kind="primary"]:hover, button[kind="secondary"]:hover,
+  button[kind="secondaryFormSubmit"]:hover {{background:{ACCENT}}}
+  button[kind="primary"] p, button[kind="secondary"] p,
+  button[kind="secondaryFormSubmit"] p {{
+    font-size:1rem; line-height:1; font-weight:600;
+  }}
+  button[kind="primary"]:disabled, button[kind="secondary"]:disabled,
+  button[kind="secondaryFormSubmit"]:disabled {{
+    background:{HOVER}; color:{INK3}; border:1px solid {LINE};
+  }}
   .idle-warning {{box-sizing:border-box; min-height:48px; width:100%;
     display:flex; align-items:center; gap:9px; padding:10px 14px;
     border-radius:6px; background:#FDE7E7; color:{BAD};

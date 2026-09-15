@@ -13,36 +13,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import streamlit as st
-import os
-from streamlit.errors import StreamlitSecretNotFoundError
-
-DEFAULT_API_URL = "https://lift-simulator-backend.up.railway.app"
-
-
-def _api_url() -> str:
-    """Use the deployed API unless an explicit usable override is supplied."""
-    try:
-        configured = st.secrets.get("LIFTSIM_API")
-    except StreamlitSecretNotFoundError:
-        configured = None
-    configured = configured or os.environ.get("LIFTSIM_API")
-    value = str(configured or DEFAULT_API_URL).strip().rstrip("/")
-    if value.endswith("/api"):
-        value = value[:-4].rstrip("/")
-    if value.startswith(("http://localhost", "http://127.0.0.1",
-                         "https://localhost", "https://127.0.0.1")):
-        return DEFAULT_API_URL
-    return value
-
-
-API_URL = _api_url()
 
 FIG = Path(__file__).resolve().parent / "web" / "figures"
 st.set_page_config(page_title="Lift Simulator", page_icon=FIG / "sl_logo-init_p.png",
                    layout="wide", initial_sidebar_state="expanded")
 
 from ui import auth, chrome, client, dialogs, theme as T, views   # noqa: E402
-client.BASE = API_URL.rstrip("/")
+
 # The supplied wordmark is white + yellow, made for a dark background. It is
 # used unchanged, on a dark chip, rather than recoloured.
 
@@ -74,9 +51,10 @@ with st.sidebar:
     # Buttons only RECORD which dialog to open; the dialog itself is opened at
     # the bottom of this file, outside every layout container. Opening one from
     # inside `with st.sidebar` leaves its placement up to the version.
-    if c1.button("Help", width = "stretch", help="What this tool does and how to drive it"):
+    if c1.button("Help", width = "stretch", icon=":material/help:",
+                 help="What this tool does and how to drive it"):
         st.session_state.dialog = "help"
-    if c2.button("Sign out", width = "stretch"):
+    if c2.button("Sign out", width = "stretch", icon=":material/logout:"):
         st.session_state.dialog = "signout"
     st.divider()
 
@@ -95,12 +73,14 @@ try:
         views.compare()
 except client.Unreachable:
     st.error("Lost contact with the simulator backend. It may have been "
-             "stopped, or it crashed — see `logs/api.log`.", icon="⛔")
+             "stopped, or it crashed — see `logs/api.log`.",
+             icon=":material/error:")
     if st.button("Try again"):
         views.data.clear_caches()
         st.rerun()
 except client.ApiError as exc:
-    st.error(f"The backend refused the request: {exc.message}", icon="⚠️")
+    st.error(f"The backend refused the request: {exc.message}",
+             icon=":material/warning:")
 
 # ---- dialogs, at the top level ------------------------------------------
 which = st.session_state.dialog

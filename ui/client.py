@@ -11,8 +11,25 @@ import os
 from typing import Any, Dict, List
 
 import httpx
+import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 
-BASE = os.getenv("LIFTSIM_API", "https://lift-simulator-backend.up.railway.app")
+#: Streamlit Cloud has no local API, so the deployed one is the default.
+#: serve.py points the local launcher at its own API instead. The base carries
+#: the route prefix: ".../api" for api/main.py, bare for the Railway backend.
+DEFAULT_API = "https://lift-simulator-backend.up.railway.app"
+
+
+def _base() -> str:
+    """Streamlit secret, then environment, then the deployed API."""
+    try:
+        configured = st.secrets.get("LIFTSIM_API")
+    except StreamlitSecretNotFoundError:
+        configured = None
+    return str(configured or os.getenv("LIFTSIM_API") or DEFAULT_API).strip().rstrip("/")
+
+
+BASE = _base()
 TIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)
 
 
