@@ -77,10 +77,11 @@ def _warm_up(box) -> bool:
             b = client.boot()
         except client.Unreachable as exc:
             box.error(f"Cannot reach the simulator backend at "
-                      f"`{client.BASE}`: {exc}", icon="⛔")
+                      f"`{client.BASE}`: {exc}", icon=":material/error:")
             return False
         if b.get("error"):
-            box.error(f"The backend failed to start: {b['error']}", icon="⛔")
+            box.error(f"The backend failed to start: {b['error']}",
+                      icon=":material/error:")
             return False
         if b.get("ready"):
             box.success(f"Ready · {b.get('elapsed_s', 0)} s")
@@ -139,7 +140,7 @@ def gate() -> bool:
             ok = _warm_up(st.empty())
             reason = st.session_state.pop("signed_out_reason", None)
             if reason:
-                st.info(reason, icon="⏳")
+                st.info(reason, icon=":material/hourglass_top:")
 
             if submitted:
                 clean = (name or "").strip().lower()
@@ -199,6 +200,6 @@ def idle_watch() -> None:
                 f'<span>No activity for a while — signing out in {int(left)} s.</span>'
                 '</div>')
         with bt:
-            if st.button("Stay signed in", key="stay"):
+            if st.button("Stay signed in", key="stay", icon=":material/login:"):
                 touch()
                 st.rerun()

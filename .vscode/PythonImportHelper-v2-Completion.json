@@ -824,6 +824,46 @@
         "documentation": {}
     },
     {
+        "label": "APPLICATIONS",
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "isExtraImport": true,
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CaseFilePayload",
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "isExtraImport": true,
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CaseFileRecord",
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "isExtraImport": true,
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "SimRequest",
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "isExtraImport": true,
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "APPLICATIONS",
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "isExtraImport": true,
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
         "label": "ClientInputs",
         "importPath": "api.schemas",
         "description": "api.schemas",
@@ -1227,6 +1267,14 @@
     },
     {
         "label": "field_validator",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "ValidationError",
         "importPath": "pydantic",
         "description": "pydantic",
         "isExtraImport": true,
@@ -1835,6 +1883,64 @@
         "documentation": {}
     },
     {
+        "label": "StreamlitSecretNotFoundError",
+        "importPath": "streamlit.errors",
+        "description": "streamlit.errors",
+        "isExtraImport": true,
+        "detail": "streamlit.errors",
+        "documentation": {}
+    },
+    {
+        "label": "csv",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "csv",
+        "description": "csv",
+        "detail": "csv",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BadZipFile",
+        "importPath": "zipfile",
+        "description": "zipfile",
+        "isExtraImport": true,
+        "detail": "zipfile",
+        "documentation": {}
+    },
+    {
+        "label": "ZIP_DEFLATED",
+        "importPath": "zipfile",
+        "description": "zipfile",
+        "isExtraImport": true,
+        "detail": "zipfile",
+        "documentation": {}
+    },
+    {
+        "label": "ZipFile",
+        "importPath": "zipfile",
+        "description": "zipfile",
+        "isExtraImport": true,
+        "detail": "zipfile",
+        "documentation": {}
+    },
+    {
+        "label": "ElementTree",
+        "importPath": "xml.etree",
+        "description": "xml.etree",
+        "isExtraImport": true,
+        "detail": "xml.etree",
+        "documentation": {}
+    },
+    {
         "label": "list_cases",
         "kind": 2,
         "importPath": "api.routers.cases",
@@ -1956,7 +2062,7 @@
         "kind": 2,
         "importPath": "api.routers.simulate",
         "description": "api.routers.simulate",
-        "peekOfCode": "def simulate(req: SimRequest, owner: str = Depends(current_user)) -> SimResponse:\n    unit = find(state.units(), req.unit_name)\n    if unit is None or not unit.active:\n        raise HTTPException(404, f\"no active unit named {req.unit_name!r}\")\n    key = input_hash(req.model_dump())\n    hit = state.cache_get(key)\n    if hit is not None:\n        return SimResponse(**hit)\n    res = state.engine.simulate(unit, to_case_inputs(req))\n    out = SimResponse(",
+        "peekOfCode": "def simulate(req: SimRequest, owner: str = Depends(current_user)) -> SimResponse:\n    unit = find(state.units(), req.unit_name)\n    if unit is None or not unit.active:\n        raise HTTPException(404, f\"no active unit named {req.unit_name!r}\")\n    key = input_hash(req.model_dump(exclude={\"application\"}))\n    hit = state.cache_get(key)\n    if hit is not None:\n        return SimResponse(**hit)\n    res = state.engine.simulate(unit, to_case_inputs(req))\n    out = SimResponse(",
         "detail": "api.routers.simulate",
         "documentation": {}
     },
@@ -2118,7 +2224,7 @@
         "kind": 6,
         "importPath": "api.schemas",
         "description": "api.schemas",
-        "peekOfCode": "class SimRequest(BaseModel):\n    unit_name: str\n    client_inputs: ClientInputs = Field(default_factory=ClientInputs)\n    safelink_inputs: SafelinkInputs = Field(default_factory=SafelinkInputs)\n    # capped: the cost is linear in steps and this endpoint is synchronous\n    depth_steps: int = Field(241, ge=2, le=5000)\n# --------------------------------------------------------------- outputs\nclass Columns(BaseModel):\n    depth_m: List[float]\n    T_c: List[float]",
+        "peekOfCode": "class SimRequest(BaseModel):\n    unit_name: str\n    # Stored with a case for traceability; the solver does not use it.\n    application: Application = \"Other\"\n    client_inputs: ClientInputs = Field(default_factory=ClientInputs)\n    safelink_inputs: SafelinkInputs = Field(default_factory=SafelinkInputs)\n    # capped: the cost is linear in steps and this endpoint is synchronous\n    depth_steps: int = Field(241, ge=2, le=5000)\n# --------------------------------------------------------------- outputs\nclass Columns(BaseModel):",
         "detail": "api.schemas",
         "documentation": {}
     },
@@ -2190,7 +2296,7 @@
         "kind": 6,
         "importPath": "api.schemas",
         "description": "api.schemas",
-        "peekOfCode": "class CaseMeta(BaseModel):\n    id: str\n    owner: str\n    name: str\n    created_utc: str\n    updated_utc: str\nclass CaseFull(CaseMeta):\n    inputs: Dict",
+        "peekOfCode": "class CaseMeta(BaseModel):\n    id: str\n    owner: str\n    name: str\n    created_utc: str\n    updated_utc: str\nclass CaseFull(CaseMeta):\n    inputs: Dict\nclass CaseFileRecord(BaseModel):\n    name: str = \"Untitled\"",
         "detail": "api.schemas",
         "documentation": {}
     },
@@ -2199,7 +2305,43 @@
         "kind": 6,
         "importPath": "api.schemas",
         "description": "api.schemas",
-        "peekOfCode": "class CaseFull(CaseMeta):\n    inputs: Dict",
+        "peekOfCode": "class CaseFull(CaseMeta):\n    inputs: Dict\nclass CaseFileRecord(BaseModel):\n    name: str = \"Untitled\"\n    inputs: SimRequest\nclass CaseFilePayload(BaseModel):\n    cases: List[CaseFileRecord] = Field(default_factory=list)",
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CaseFileRecord",
+        "kind": 6,
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "peekOfCode": "class CaseFileRecord(BaseModel):\n    name: str = \"Untitled\"\n    inputs: SimRequest\nclass CaseFilePayload(BaseModel):\n    cases: List[CaseFileRecord] = Field(default_factory=list)",
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CaseFilePayload",
+        "kind": 6,
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "peekOfCode": "class CaseFilePayload(BaseModel):\n    cases: List[CaseFileRecord] = Field(default_factory=list)",
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "APPLICATIONS",
+        "kind": 5,
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "peekOfCode": "APPLICATIONS = (\n    \"Splash zone\", \"Subsea landing\", \"Resonance mitigation\",\n    \"Salvage protection\", \"Pile running protection\", \"Other\",\n)\nApplication = Literal[\n    \"Splash zone\", \"Subsea landing\", \"Resonance mitigation\",\n    \"Salvage protection\", \"Pile running protection\", \"Other\",\n]\n# --------------------------------------------------------------- inputs\nclass LiftPointIn(BaseModel):",
+        "detail": "api.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "Application",
+        "kind": 5,
+        "importPath": "api.schemas",
+        "description": "api.schemas",
+        "peekOfCode": "Application = Literal[\n    \"Splash zone\", \"Subsea landing\", \"Resonance mitigation\",\n    \"Salvage protection\", \"Pile running protection\", \"Other\",\n]\n# --------------------------------------------------------------- inputs\nclass LiftPointIn(BaseModel):\n    enabled: bool = True\n    depth_m: float = 0.0\n    stroke_m: float = 0.0\n    mode: Literal[\"SZ\", \"SS\"] = \"SZ\"",
         "detail": "api.schemas",
         "documentation": {}
     },
@@ -3270,7 +3412,7 @@
         "kind": 2,
         "importPath": "ui.auth",
         "description": "ui.auth",
-        "peekOfCode": "def idle_watch() -> None:\n    left = IDLE_S - (time.time() - st.session_state.get(\"last_seen\", time.time()))\n    if left <= 0:\n        sign_out()\n    elif left <= WARN_S:\n        st.error(f\"No activity for a while — signing out in {int(left)} s.\",\n                   icon=\"⏳\")\n        if st.button(\"Stay signed in\", key=\"stay\"):\n            touch()\n            st.rerun()",
+        "peekOfCode": "def idle_watch() -> None:\n    left = IDLE_S - (time.time() - st.session_state.get(\"last_seen\", time.time()))\n    if left <= 0:\n        sign_out()\n    elif left <= WARN_S:\n        er, bt = st.columns([7, 1], gap=\"small\", vertical_alignment=\"center\")\n        with er:\n            st.html(\n                '<div class=\"idle-warning\" role=\"alert\">'\n                '<span class=\"idle-warning-icon\">⏳</span>'",
         "detail": "ui.auth",
         "documentation": {}
     },
@@ -3320,15 +3462,6 @@
         "documentation": {}
     },
     {
-        "label": "WARN_S",
-        "kind": 5,
-        "importPath": "ui.auth",
-        "description": "ui.auth",
-        "peekOfCode": "WARN_S = 60  #: seconds before idle timeout to show a warning\ndef sign_out() -> None:\n    \"\"\"Clear everything: the next person must not find the previous one's\n    case on screen. Saved cases live on disk and are untouched.\"\"\"\n    keep = {\"slide\", \"signed_out_reason\"}\n    for k in [k for k in st.session_state.keys() if k not in keep]:\n        del st.session_state[k]\n    st.rerun()\ndef touch() -> None:\n    st.session_state.last_seen = time.time()",
-        "detail": "ui.auth",
-        "documentation": {}
-    },
-    {
         "label": "series",
         "kind": 2,
         "importPath": "ui.charts",
@@ -3360,7 +3493,7 @@
         "kind": 5,
         "importPath": "ui.charts",
         "description": "ui.charts",
-        "peekOfCode": "LAYOUT = dict(\n    template=\"simple_white\", height=T.CHART_H,\n    margin=dict(l=8, r=14, t=46, b=8),      # automargin does the real work\n    hovermode=\"x unified\", showlegend=True,\n    legend=dict(orientation=\"h\", y=1.10, x=.5, xanchor=\"center\",\n                yanchor=\"bottom\", font=dict(size=10.5),\n                bgcolor=\"rgba(0,0,0,0)\"),\n    font=dict(family=\"Montserrat, sans-serif\", size=11, color=T.INK2),\n    title=dict(x=.5, xanchor=\"center\", y=.985, yanchor=\"top\",\n               font=dict(size=13, color=T.INK)),",
+        "peekOfCode": "LAYOUT = dict(\n    template=\"simple_white\", height=T.CHART_H,\n    margin=dict(l=8, r=14, t=74, b=8),      # keep the title inside the frame\n    hovermode=\"x unified\", showlegend=True,\n    legend=dict(orientation=\"h\", y=1.02, x=.5, xanchor=\"center\",\n                yanchor=\"bottom\", font=dict(size=10.5),\n                bgcolor=\"rgba(0,0,0,0)\"),\n    font=dict(family=\"Montserrat, sans-serif\", size=11, color=T.INK2),\n    title=dict(x=.5, xanchor=\"center\", y=.94, yanchor=\"top\",\n               font=dict(size=16, color=T.INK)),",
         "detail": "ui.charts",
         "documentation": {}
     },
@@ -3387,7 +3520,7 @@
         "kind": 2,
         "importPath": "ui.chrome",
         "description": "ui.chrome",
-        "peekOfCode": "def band(title: str, sub: str = \"\") -> None:\n    \"\"\"Section heading with its rule. Inline, for the same reason as above.\"\"\"\n    st.html(f'<div style=\"display:flex;align-items:baseline;gap:9px;'\n        f'margin:.2rem 0 .6rem;font-size:11px;font-weight:700;'\n        f'letter-spacing:.13em;text-transform:uppercase;color:{T.ACCENT_FG};'\n        f'border-bottom:1px solid {T.LINE_SOFT};padding-bottom:6px;'\n        f'line-height:1.7\">{title}'\n        + (f'<span style=\"margin-left:auto;font-size:10.5px;font-weight:400;'\n           f'letter-spacing:.02em;text-transform:none;color:{T.INK3}\">{sub}</span>'\n           if sub else \"\")",
+        "peekOfCode": "def band(title: str, sub: str = \"\") -> None:\n    \"\"\"Section heading with its rule. Inline, for the same reason as above.\"\"\"\n    st.html(f'<div style=\"display:flex;align-items:baseline;gap:9px;'\n        f'margin:.2rem 0 .6rem;font-size:14px;font-weight:700;'\n        f'letter-spacing:.13em;text-transform:uppercase;color:{T.ACCENT_FG};'\n          f'border-bottom:1px solid {T.LINE_SOFT};box-sizing:border-box;'\n          f'min-height:34px;padding:5px 0 7px;line-height:1.35;'\n          f'overflow:visible\">{title}'\n        + (f'<span style=\"margin-left:auto;font-size:10.5px;font-weight:400;'\n              f'letter-spacing:.02em;text-transform:none;color:{T.INK3};'",
         "detail": "ui.chrome",
         "documentation": {}
     },
@@ -3396,7 +3529,7 @@
         "kind": 6,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "class Unreachable(RuntimeError):\n    \"\"\"The API is not answering. Distinct from a rejected request: one means\n    the backend is down, the other means the inputs were wrong.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message\ndef _explain(r: httpx.Response) -> str:\n    \"\"\"422 bodies are a list of field errors - show the field, not 'failed'.\"\"\"",
+        "peekOfCode": "class Unreachable(RuntimeError):\n    \"\"\"The API is not answering, including the target and transport error.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message\ndef _explain(r: httpx.Response) -> str:\n    \"\"\"422 bodies are a list of field errors - show the field, not 'failed'.\"\"\"\n    try:",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3414,7 +3547,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def health() -> Dict:\n    return _call(\"GET\", \"/api/health\")\ndef boot() -> Dict:\n    \"\"\"Warm-up progress. Public on purpose: the sign-in page renders it\n    before anybody has signed in.\"\"\"\n    return _call(\"GET\", \"/api/public/boot\")\n# --- domain --------------------------------------------------------------\ndef units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/api/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})",
+        "peekOfCode": "def health() -> Dict:\n    return _call(\"GET\", \"/health\")\ndef boot() -> Dict:\n    \"\"\"Warm-up progress. Public on purpose: the sign-in page renders it\n    before anybody has signed in.\"\"\"\n    return _call(\"GET\", \"/public/boot\")\n# --- domain --------------------------------------------------------------\ndef units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3423,7 +3556,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def boot() -> Dict:\n    \"\"\"Warm-up progress. Public on purpose: the sign-in page renders it\n    before anybody has signed in.\"\"\"\n    return _call(\"GET\", \"/api/public/boot\")\n# --- domain --------------------------------------------------------------\ndef units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/api/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})\ndef unit_status() -> Dict:\n    return _call(\"GET\", \"/api/units/status\")",
+        "peekOfCode": "def boot() -> Dict:\n    \"\"\"Warm-up progress. Public on purpose: the sign-in page renders it\n    before anybody has signed in.\"\"\"\n    return _call(\"GET\", \"/public/boot\")\n# --- domain --------------------------------------------------------------\ndef units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})\ndef unit_status() -> Dict:\n    return _call(\"GET\", \"/units/status\")",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3432,7 +3565,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/api/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})\ndef unit_status() -> Dict:\n    return _call(\"GET\", \"/api/units/status\")\ndef unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/api/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/api/units\", user=user,",
+        "peekOfCode": "def units(include_deleted: bool = False) -> List[Dict]:\n    return _call(\"GET\", \"/units\",\n                 params={\"include_deleted\": str(include_deleted).lower()})\ndef unit_status() -> Dict:\n    return _call(\"GET\", \"/units/status\")\ndef unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/units\", user=user,",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3441,7 +3574,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def unit_status() -> Dict:\n    return _call(\"GET\", \"/api/units/status\")\ndef unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/api/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/api/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,",
+        "peekOfCode": "def unit_status() -> Dict:\n    return _call(\"GET\", \"/units/status\")\ndef unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3450,7 +3583,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/api/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/api/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved",
+        "peekOfCode": "def unit_fields() -> List[Dict]:\n    return _call(\"GET\", \"/units/fields\")\ndef create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3459,7 +3592,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/api/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved\n    cases, so overwriting one would make old results unreproducible - the API\n    refuses it, and this is the only edit path the UI offers.\"\"\"",
+        "peekOfCode": "def create_unit(user: str, name: str, params: Dict, applications: List[str],\n                note: str = \"\") -> Dict:\n    return _call(\"POST\", \"/units\", user=user,\n                 json={\"name\": name, \"params\": params,\n                       \"applications\": applications, \"note\": note})\ndef create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved\n    cases, so overwriting one would make old results unreproducible - the API\n    refuses it, and this is the only edit path the UI offers.\"\"\"",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3468,7 +3601,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved\n    cases, so overwriting one would make old results unreproducible - the API\n    refuses it, and this is the only edit path the UI offers.\"\"\"\n    return _call(\"POST\", \"/api/units/variant\", user=user,\n                 json={\"base_name\": base_name, \"new_name\": new_name,\n                       \"changes\": changes})\ndef delete_unit(user: str, name: str) -> Dict:\n    \"\"\"Soft delete: state = 0. The record stays, so a case that named this",
+        "peekOfCode": "def create_variant(user: str, base_name: str, changes: Dict,\n                   new_name: str | None = None) -> Dict:\n    \"\"\"Edit is always a NEW unit. A catalogue unit is referenced by saved\n    cases, so overwriting one would make old results unreproducible - the API\n    refuses it, and this is the only edit path the UI offers.\"\"\"\n    return _call(\"POST\", \"/units/variant\", user=user,\n                 json={\"base_name\": base_name, \"new_name\": new_name,\n                       \"changes\": changes})\ndef delete_unit(user: str, name: str) -> Dict:\n    \"\"\"Soft delete: state = 0. The record stays, so a case that named this",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3477,7 +3610,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def delete_unit(user: str, name: str) -> Dict:\n    \"\"\"Soft delete: state = 0. The record stays, so a case that named this\n    unit still resolves it.\"\"\"\n    return _call(\"DELETE\", \"/api/units\", user=user, params={\"name\": name})\ndef simulate(req: Dict, user: str) -> Dict:\n    return _call(\"POST\", \"/api/simulate\", user=user, json=req)\ndef list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/api/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/api/cases\", user=user,",
+        "peekOfCode": "def delete_unit(user: str, name: str) -> Dict:\n    \"\"\"Soft delete: state = 0. The record stays, so a case that named this\n    unit still resolves it.\"\"\"\n    return _call(\"DELETE\", \"/units\", user=user, params={\"name\": name})\ndef simulate(req: Dict, user: str) -> Dict:\n    return _call(\"POST\", \"/simulate\", user=user, json=req)\ndef list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/cases\", user=user,",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3486,7 +3619,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def simulate(req: Dict, user: str) -> Dict:\n    return _call(\"POST\", \"/api/simulate\", user=user, json=req)\ndef list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/api/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/api/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/api/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:",
+        "peekOfCode": "def simulate(req: Dict, user: str) -> Dict:\n    return _call(\"POST\", \"/simulate\", user=user, json=req)\ndef list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3495,7 +3628,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/api/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/api/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/api/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/api/cases/{case_id}\", user=user)",
+        "peekOfCode": "def list_cases(user: str) -> List[Dict]:\n    return _call(\"GET\", \"/cases\", user=user)\ndef save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/cases/{case_id}\", user=user)",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3504,7 +3637,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/api/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/api/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/api/cases/{case_id}\", user=user)",
+        "peekOfCode": "def save_case(user: str, name: str, inputs: Dict) -> Dict:\n    return _call(\"POST\", \"/cases\", user=user,\n                 json={\"name\": name, \"inputs\": inputs})\ndef get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/cases/{case_id}\", user=user)",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3513,7 +3646,7 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/api/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/api/cases/{case_id}\", user=user)",
+        "peekOfCode": "def get_case(user: str, case_id: str) -> Dict:\n    return _call(\"GET\", f\"/cases/{case_id}\", user=user)\ndef delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/cases/{case_id}\", user=user)",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3522,7 +3655,16 @@
         "kind": 2,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "def delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/api/cases/{case_id}\", user=user)",
+        "peekOfCode": "def delete_case(user: str, case_id: str) -> None:\n    _call(\"DELETE\", f\"/cases/{case_id}\", user=user)",
+        "detail": "ui.client",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_API",
+        "kind": 5,
+        "importPath": "ui.client",
+        "description": "ui.client",
+        "peekOfCode": "DEFAULT_API = \"https://lift-simulator-backend.up.railway.app\"\ndef _base() -> str:\n    \"\"\"Streamlit secret, then environment, then the deployed API.\"\"\"\n    try:\n        configured = st.secrets.get(\"LIFTSIM_API\")\n    except StreamlitSecretNotFoundError:\n        configured = None\n    return str(configured or os.getenv(\"LIFTSIM_API\") or DEFAULT_API).strip().rstrip(\"/\")\nBASE = _base()\nTIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3531,7 +3673,7 @@
         "kind": 5,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "BASE = os.getenv(\"LIFTSIM_API\", \"http://127.0.0.1:8000\")\nTIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)\nclass Unreachable(RuntimeError):\n    \"\"\"The API is not answering. Distinct from a rejected request: one means\n    the backend is down, the other means the inputs were wrong.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message",
+        "peekOfCode": "BASE = _base()\nTIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)\nclass Unreachable(RuntimeError):\n    \"\"\"The API is not answering, including the target and transport error.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message\ndef _explain(r: httpx.Response) -> str:",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3540,7 +3682,7 @@
         "kind": 5,
         "importPath": "ui.client",
         "description": "ui.client",
-        "peekOfCode": "TIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)\nclass Unreachable(RuntimeError):\n    \"\"\"The API is not answering. Distinct from a rejected request: one means\n    the backend is down, the other means the inputs were wrong.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message\ndef _explain(r: httpx.Response) -> str:",
+        "peekOfCode": "TIMEOUT = httpx.Timeout(connect=2.0, read=60.0, write=10.0, pool=2.0)\nclass Unreachable(RuntimeError):\n    \"\"\"The API is not answering, including the target and transport error.\"\"\"\nclass ApiError(RuntimeError):\n    \"\"\"The API answered, and said no. `message` is already readable.\"\"\"\n    def __init__(self, status: int, message: str):\n        super().__init__(message)\n        self.status, self.message = status, message\ndef _explain(r: httpx.Response) -> str:\n    \"\"\"422 bodies are a list of field errors - show the field, not 'failed'.\"\"\"",
         "detail": "ui.client",
         "documentation": {}
     },
@@ -3693,7 +3835,7 @@
         "kind": 2,
         "importPath": "ui.dialogs",
         "description": "ui.dialogs",
-        "peekOfCode": "def save_case() -> None:\n    \"\"\"A case is the input set, not the curves - so this asks for a name and\n    nothing else, and it does not care whether a run is on screen.\"\"\"\n    req = st.session_state.dialog_req\n    st.caption(\"Stored under your user name. Reopening it re-runs the solver, \"\n               \"so a case always reflects the current calculation method.\")\n    name = st.text_input(\"Case name\", value=f\"{req['unit_name']} case\")\n    c1, c2 = st.columns(2)\n    if c1.button(\"Save\", type=\"primary\", use_container_width=True):\n        if not name.strip():",
+        "peekOfCode": "def save_case() -> None:\n    \"\"\"A case is the input set, not the curves - so this asks for a name and\n    nothing else, and it does not care whether a run is on screen.\"\"\"\n    req = st.session_state.dialog_req\n    name = st.text_input(\"Case name\", value=f\"{req['unit_name']} case\")\n    destination = st.radio(\"Save to\", [\"Web\", \"Download file\"],\n                            horizontal=True, key=\"case_save_destination\")\n    record = {\"name\": name.strip() or \"Untitled\", \"inputs\": req}\n    if destination == \"Web\":\n        st.caption(\"Saved under your user name. Reopening it re-runs the solver.\")",
         "detail": "ui.dialogs",
         "documentation": {}
     },
@@ -3702,7 +3844,7 @@
         "kind": 2,
         "importPath": "ui.dialogs",
         "description": "ui.dialogs",
-        "peekOfCode": "def load_case() -> None:\n    from .views import apply_case          # late: avoids an import cycle\n    rows = data.list_cases(st.session_state.user)\n    if not rows:\n        st.info(\"No saved cases yet. Set up a lift and use **Save case**.\")\n    for r in rows:\n        c1, c2, c3, c4 = st.columns([5, 2.2, 1.1, .8])\n        c1.write(f\"**{r['name']}**\")\n        c2.caption(r[\"updated_utc\"][:16].replace(\"T\", \" \"))\n        if c3.button(\"Open\", key=f\"open{r['id']}\", use_container_width=True):",
+        "peekOfCode": "def load_case() -> None:\n    from .views import apply_case          # late: avoids an import cycle\n    source = st.radio(\"Load from\", [\"Web\", \"File\"], horizontal=True,\n                      key=\"case_load_source\")\n    if source == \"Web\":\n        rows = data.list_cases(st.session_state.user)\n        if not rows:\n            st.info(\"No saved Web cases yet. Use Save case and choose Web.\")\n        for r in rows:\n            c1, c2, c3, c4 = st.columns([5, 2.2, 1.1, .8])",
         "detail": "ui.dialogs",
         "documentation": {}
     },
@@ -3721,15 +3863,6 @@
         "importPath": "ui.dialogs",
         "description": "ui.dialogs",
         "peekOfCode": "FIG_DIR = Path(__file__).resolve().parent.parent / \"web\" / \"figures\"\n# ------------------------------------------------------------------ unit\n# All five take no arguments and read st.session_state, so every one of them\n# is opened exactly the way the two that always worked are.\n@st.dialog(f\"Unit details\", width=\"large\")\ndef unit_details() -> None:\n    unit = st.session_state.dialog_unit\n    prm, der, p = unit[\"params\"], unit[\"derived\"], unit[\"parsed\"]\n    st.divider()\n    st.markdown(f\"### General Assembly: {unit['name']}\")",
-        "detail": "ui.dialogs",
-        "documentation": {}
-    },
-    {
-        "label": "APPLICATIONS",
-        "kind": 5,
-        "importPath": "ui.dialogs",
-        "description": "ui.dialogs",
-        "peekOfCode": "APPLICATIONS = [\"Splash zone\", \"Subsea landing\", \"Resonance\", \"Salvage\"]\ndef _param_grid(fields, values, prefix: str) -> Dict[str, float]:\n    \"\"\"The twelve persisted fields, three across. Labels and units come from\n    the API so there is only one definition of the parameter list.\"\"\"\n    out, cols = {}, st.columns(3)\n    for i, f in enumerate(fields):\n        label = f\"{f['label']}\" + (f\" [{f['unit']}]\" if f[\"unit\"] else \"\")\n        out[f[\"key\"]] = cols[i % 3].number_input(\n            label, value=float(values.get(f[\"key\"], 0.0)),\n            key=f\"{prefix}_{f['key']}\", step=.01, format=\"%.5f\")",
         "detail": "ui.dialogs",
         "documentation": {}
     },
@@ -3801,7 +3934,7 @@
         "kind": 5,
         "importPath": "ui.theme",
         "description": "ui.theme",
-        "peekOfCode": "MAX_CASES = len(CASE_STYLE)\nCSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}",
+        "peekOfCode": "MAX_CASES = len(CASE_STYLE)\nCSS = f\"\"\"\n<style>\n  body {{line-height:1.5}}\n  .stMarkdown li > p {{margin:0}}\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}",
         "detail": "ui.theme",
         "documentation": {}
     },
@@ -3810,7 +3943,7 @@
         "kind": 5,
         "importPath": "ui.theme",
         "description": "ui.theme",
-        "peekOfCode": "CSS = f\"\"\"\n<style>\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */\n  section[data-testid=\"stSidebar\"] div[data-testid=\"stVerticalBlock\"] {{gap:.55rem}}\n  .who {{padding-top:.55rem; white-space:nowrap}}",
+        "peekOfCode": "CSS = f\"\"\"\n<style>\n  body {{line-height:1.5}}\n  .stMarkdown li > p {{margin:0}}\n  .block-container {{padding-top:2.2rem; padding-bottom:3.2rem; max-width:100%}}\n  section[data-testid=\"stSidebar\"][aria-expanded=\"true\"] {{\n    width:410px !important; min-width:410px !important;\n  }}\n  section[data-testid=\"stSidebar\"] .block-container {{padding-top:1.2rem}}\n  /* the rail is dense: tighten the vertical rhythm so a whole case fits */",
         "detail": "ui.theme",
         "documentation": {}
     },
@@ -3819,7 +3952,7 @@
         "kind": 2,
         "importPath": "ui.views",
         "description": "ui.views",
-        "peekOfCode": "def build_request() -> Dict | None:\n    \"\"\"Read the rail into the API's own request model. Returns None when the\n    inputs do not validate - the message is the same one the API would give,\n    just without the round trip.\"\"\"\n    with st.sidebar:\n        chrome.band(\"Client inputs\", \"from the job spec\")\n        with st.expander(\"Payload info\", expanded=True):\n            c1, c2 = st.columns(2)\n            air = c1.number_input(\"Air wt [kg]\", value=255000.0, step=1000.0, key=\"air_kg\")\n            wet = c2.number_input(\"Wet wt [kg]\", value=202800.0, step=1000.0, key=\"wet_kg\")",
+        "peekOfCode": "def build_request() -> Dict | None:\n    \"\"\"Read the rail into the API's own request model. Returns None when the\n    inputs do not validate - the message is the same one the API would give,\n    just without the round trip.\"\"\"\n    with st.sidebar:\n        chrome.band(\"Client inputs\", \"from the job spec\")\n        with st.expander(\"Payload info\", expanded=False):\n            c1, c2 = st.columns(2)\n            air = c1.number_input(\"Air wt [kg]\", value=255000.0, step=1000.0, key=\"air_kg\")\n            wet = c2.number_input(\"Wet wt [kg]\", value=202800.0, step=1000.0, key=\"wet_kg\")",
         "detail": "ui.views",
         "documentation": {}
     },
@@ -3828,7 +3961,7 @@
         "kind": 2,
         "importPath": "ui.views",
         "description": "ui.views",
-        "peekOfCode": "def simulator(req: Dict | None) -> None:\n    res = st.session_state.get(\"result\")\n    # A case is inputs TOGETHER WITH the results they produced. Comparing the\n    # request that produced the result against the one on screen is the whole\n    # staleness rule - no bookkeeping, and a reload cannot lose it.\n    fresh = bool(res) and req is not None and st.session_state.get(\"result_req\") == req\n    with st.sidebar:\n        st.markdown(\"---\")\n        if st.button(\"▶  Run simulation\", type=\"primary\",\n                     width = \"stretch\", disabled=req is None):",
+        "peekOfCode": "def simulator(req: Dict | None) -> None:\n    res = st.session_state.get(\"result\")\n    # A case is inputs TOGETHER WITH the results they produced. Comparing the\n    # request that produced the result against the one on screen is the whole\n    # staleness rule - no bookkeeping, and a reload cannot lose it.\n    fresh = bool(res) and req is not None and st.session_state.get(\"result_req\") == req\n    with st.sidebar:\n        st.markdown(\"---\")\n        if st.button(\"Run simulation\", type=\"primary\", icon=\":material/play_arrow:\",\n                     width = \"stretch\", disabled=req is None):",
         "detail": "ui.views",
         "documentation": {}
     },
@@ -3918,7 +4051,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "req = None\ntry:\n    if st.session_state.page == \"sim\":\n        req = views.build_request()      # the rail is only part of Simulator\n        views.simulator(req)\n    else:\n        views.compare()\nexcept client.Unreachable:\n    st.error(\"Lost contact with the simulator backend. It may have been \"\n             \"stopped, or it crashed — see `logs/api.log`.\", icon=\"⛔\")",
+        "peekOfCode": "req = None\ntry:\n    if st.session_state.page == \"sim\":\n        req = views.build_request()      # the rail is only part of Simulator\n        views.simulator(req)\n    else:\n        views.compare()\nexcept client.Unreachable:\n    st.error(\"Lost contact with the simulator backend. It may have been \"\n             \"stopped, or it crashed — see `logs/api.log`.\",",
         "detail": "app",
         "documentation": {}
     },
@@ -3936,7 +4069,7 @@
         "kind": 2,
         "importPath": "serve",
         "description": "serve",
-        "peekOfCode": "def run_ui() -> None:\n    _detach(\"server\")\n    port = os.getenv(\"LIFTSIM_PORT\", \"8501\")\n    host = os.getenv(\"LIFTSIM_HOST\", \"127.0.0.1\")\n    sys.argv = [\"streamlit\", \"run\", str(ROOT / \"app.py\"),\n                \"--server.port\", port, \"--server.address\", host,\n                \"--server.headless\", \"true\", \"--browser.gatherUsageStats\", \"false\"]\n    from streamlit.web.cli import main\n    main()\ndef run_api() -> None:",
+        "peekOfCode": "def run_ui() -> None:\n    _detach(\"server\")\n    # Launched locally, so talk to the local API, not the deployed default.\n    api_port = os.getenv(\"LIFTSIM_API_PORT\", \"8000\")\n    os.environ.setdefault(\"LIFTSIM_API\", f\"http://127.0.0.1:{api_port}/api\")\n    port = os.getenv(\"LIFTSIM_PORT\", \"8501\")\n    host = os.getenv(\"LIFTSIM_HOST\", \"127.0.0.1\")\n    sys.argv = [\"streamlit\", \"run\", str(ROOT / \"app.py\"),\n                \"--server.port\", port, \"--server.address\", host,\n                \"--server.headless\", \"true\", \"--browser.gatherUsageStats\", \"false\"]",
         "detail": "serve",
         "documentation": {}
     },

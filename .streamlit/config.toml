@@ -1,15 +1,29 @@
 # Lifted from External_function_webUI so the two internal tools look alike.
+[server]
+headless = true
+fileWatcherType = "auto"
+enableStaticServing = true
+
+[[theme.fontFaces]]
+family = "montserrat"
+url = "app/static/Montserrat-VariableFont_wght.ttf"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "montserrat"
+url = "app/static/Montserrat-Italic-VariableFont_wght.ttf"
+style = "italic"
+
 [theme]
 base = "light"
 primaryColor = "#FFCD00"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F4F5F8"
 textColor = "#000000"
-font = "sans serif"
-
-[server]
-headless = true
-fileWatcherType = "auto"
+font = "montserrat"
+baseRadius = "0"
+buttonRadius = "0"
+showWidgetBorder = true
 
 [browser]
 gatherUsageStats = false

@@ -59,13 +59,13 @@ def _unit_panel() -> str:
         st.image(str(photo))
 
     d1, d2 = st.columns(2)
-    if d1.button("View details", width = "stretch",
+    if d1.button("View details", width = "stretch", icon =":material/image:",
                  help="Drawing, designation breakdown and every stored "
                       "parameter, in a window over this page."):
         # Flag only - no st.rerun(). The dispatcher at the foot of app.py
         # opens it in THIS run, which is the run the click belongs to.
         st.session_state.dialog, st.session_state.dialog_unit = "unit", u
-    if d2.button("Manage units", width = "stretch",
+    if d2.button("Manage units", width = "stretch", icon=":material/settings:",
                  help="Add a unit, derive a variant from one, or retire one."):
         st.session_state.dialog = "units"
     return name
@@ -173,26 +173,31 @@ def simulator(req: Dict | None) -> None:
 
     with st.sidebar:
         st.markdown("---")
-        if st.button("▶  Run simulation", type="primary",
+        if st.button("Run simulation", type="primary", icon=":material/play_arrow:",
                      width = "stretch", disabled=req is None):
             _run(req)
             st.rerun()
         full = len(st.session_state.compare) >= T.MAX_CASES
-        if st.button("Add to compare", width = "stretch",
+        c1, c2 = st.columns([1, 1])
+        if c1.button("Add to compare", width = "stretch",
+                     icon=":material/compare_arrows:",
                      disabled=not fresh or full,
                      help="Comparison is full." if full else
                           "Run the simulation first — a case is a set of inputs "
                           "together with the results they produced."):
             _add_to_compare(req)
             st.rerun()
-        c1, c2 = st.columns(2)
-        if c1.button("Save case", width = "stretch", disabled=req is None):
-            st.session_state.dialog, st.session_state.dialog_req = "save", req
-        if c2.button("Load case", width = "stretch"):
-            st.session_state.dialog = "load"
-        if st.button(f"Compare  ({len(st.session_state.compare)}/{T.MAX_CASES} in new page)", width = "stretch"):
+        if c2.button(f"Go to compare  ({len(st.session_state.compare)}/{T.MAX_CASES}) ->", 
+                     icon=":material/monitoring:",
+                     width = "stretch"):
             st.session_state.page = "cmp"
             st.rerun()
+        c1, c2 = st.columns(2)
+        if c1.button("Save case", width = "stretch", disabled=req is None,
+                 icon=":material/save:"):
+            st.session_state.dialog, st.session_state.dialog_req = "save", req
+        if c2.button("Load case", width = "stretch", icon=":material/folder_open:"):
+            st.session_state.dialog = "load"
 
     err = st.session_state.pop("run_error", None)
     if err:
@@ -333,7 +338,8 @@ def compare() -> None:
                     f"<span style='font-size:13px'>{c['unit']}</span><br>"
                     f"<span style='font-size:11px;color:{T.INK3}'>{c['sub']}</span>"
                     f"</div>")
-            if c3.button("✕", key=f"del{c['id']}", help="Remove this case"):
+            if c3.button(":material/close:", key=f"del{c['id']}",
+                         help="Remove this case"):
                 cases.remove(c)
                 st.rerun()
         st.caption(f"Up to {T.MAX_CASES} cases. Remove one to add another.")
@@ -343,7 +349,7 @@ def compare() -> None:
                   if st.checkbox(f"{label}  [{unit}]", value=on, key=f"q{k}")]
 
         st.markdown("---")
-        if st.button("←  Simulator", width = "stretch"):
+        if st.button("Simulator", width = "stretch", icon=":material/arrow_back:"):
             st.session_state.page = "sim"
             st.rerun()
 

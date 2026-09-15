@@ -51,9 +51,10 @@ with st.sidebar:
     # Buttons only RECORD which dialog to open; the dialog itself is opened at
     # the bottom of this file, outside every layout container. Opening one from
     # inside `with st.sidebar` leaves its placement up to the version.
-    if c1.button("Help", width = "stretch", help="What this tool does and how to drive it"):
+    if c1.button("Help", width = "stretch", icon=":material/help:",
+                 help="What this tool does and how to drive it"):
         st.session_state.dialog = "help"
-    if c2.button("Sign out", width = "stretch"):
+    if c2.button("Sign out", width = "stretch", icon=":material/logout:"):
         st.session_state.dialog = "signout"
     st.divider()
 
@@ -72,12 +73,14 @@ try:
         views.compare()
 except client.Unreachable:
     st.error("Lost contact with the simulator backend. It may have been "
-             "stopped, or it crashed — see `logs/api.log`.", icon="⛔")
+             "stopped, or it crashed — see `logs/api.log`.",
+             icon=":material/error:")
     if st.button("Try again"):
         views.data.clear_caches()
         st.rerun()
 except client.ApiError as exc:
-    st.error(f"The backend refused the request: {exc.message}", icon="⚠️")
+    st.error(f"The backend refused the request: {exc.message}",
+             icon=":material/warning:")
 
 # ---- dialogs, at the top level ------------------------------------------
 which = st.session_state.dialog

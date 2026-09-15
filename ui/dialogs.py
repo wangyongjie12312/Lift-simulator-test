@@ -180,10 +180,10 @@ def help_doc() -> None:
         if body is None:
             # Marked, not guessed: a plausible-sounding definition in a
             # reference document is worse than an admitted gap.
-            st.info(help_text.PLACEHOLDERS[title], icon="📝")
+            st.info(help_text.PLACEHOLDERS[title], icon=":material/edit_note:")
         else:
             st.markdown(body)
-    st.warning(help_text.CURRENT_BUILD, icon="⚠️")
+    st.warning(help_text.CURRENT_BUILD, icon=":material/warning:")
     if st.button("Close", use_container_width=True, key="help_close"):
         st.rerun()
 
